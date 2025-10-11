@@ -14,33 +14,33 @@ namespace AUS2_S_1.Trees.AVLTree
             return insertedNode;
         }
 
-        //not done
         public void RightRotation(Node<T> node)
         {
             var leftSon = node.LeftSon;
-            var leftSonLeftSon = node.LeftSon!.LeftSon;
             var leftSonRightSon = node.LeftSon!.RightSon;
 
-
-
-            //if node at which rotation is going to be done is root
-            if (node.Parent == null && Root != null)
+            if (node.Parent == null)
             {
                 Root = leftSon;
-                Root.RightSon = node;
-                
-                Root!.Parent = null;
-                Root.LeftSon!.Parent = Root;
-                Root.RightSon!.Parent = Root;
-
-                return;
             }
-
-
-            if (node == node.Parent.LeftSon)
+            else
             {
-
+                node.Parent.LeftSon = leftSon;
             }
+            leftSon!.Parent = node.Parent;
+
+
+            if (leftSonRightSon != null)
+            {
+                node.LeftSon = leftSonRightSon;
+                leftSonRightSon.Parent = node;
+            }
+            else
+            {
+                node.LeftSon = null;
+            }
+            leftSon.RightSon = node;
+            node.Parent = leftSon;
         }
 
     }

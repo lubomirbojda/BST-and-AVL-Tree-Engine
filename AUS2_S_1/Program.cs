@@ -8,7 +8,7 @@ namespace AUS2_S_1
         static void Main()
         {
             //int[] numbers = [8, 3, 10, 1, 6, 14, 4, 7, 13];
-            int[] numbers = [10, 5, 2];
+            int[] numbers = [20, 15, 25, 10, 18, 23, 30, 5, 12, 1];
 
             //BST<int> bstTest = new();
 
@@ -38,7 +38,7 @@ namespace AUS2_S_1
                 avltTest.Insert(number);
             }
 
-            avltTest.RightRotation(avltTest.Root);
+            avltTest.RightRotation(avltTest.Search(15));
 
             Console.WriteLine("ajal");
         }
