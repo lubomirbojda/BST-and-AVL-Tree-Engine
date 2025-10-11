@@ -1,4 +1,5 @@
-﻿using AUS2_S_1.Trees.BinarySearchTree;
+﻿using System.Security.Cryptography;
+using AUS2_S_1.Trees.BinarySearchTree;
 
 namespace AUS2_S_1.Trees.AVLTree
 {
@@ -23,24 +24,54 @@ namespace AUS2_S_1.Trees.AVLTree
             {
                 Root = leftSon;
             }
-            else
+            else if (node == node.Parent.LeftSon)
             {
                 node.Parent.LeftSon = leftSon;
             }
+            else
+            {
+                node.Parent.RightSon = leftSon;
+            }
             leftSon!.Parent = node.Parent;
 
-
+            node.LeftSon = leftSonRightSon;
             if (leftSonRightSon != null)
             {
-                node.LeftSon = leftSonRightSon;
                 leftSonRightSon.Parent = node;
+            }
+
+            leftSon.RightSon = node;
+            node.Parent = leftSon;
+        }
+
+        public void LeftRotation(Node<T> node)
+        {
+            var rightSon = node.RightSon;
+            var rightSonLeftSon = node.RightSon!.LeftSon;
+
+            if (node.Parent == null)
+            {
+                Root = rightSon;
+            }
+            else if (node == node.Parent.RightSon)
+            {
+                node.Parent.RightSon = rightSon;
             }
             else
             {
-                node.LeftSon = null;
+                node.Parent.LeftSon = rightSon;
             }
-            leftSon.RightSon = node;
-            node.Parent = leftSon;
+
+            rightSon!.Parent = node.Parent;
+
+            node.RightSon = rightSonLeftSon;
+            if (rightSonLeftSon != null)
+            {   
+                rightSonLeftSon.Parent = node;
+            }
+
+            rightSon.LeftSon = node;
+            node.Parent = rightSon;
         }
 
     }
