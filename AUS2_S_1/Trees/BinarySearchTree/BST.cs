@@ -4,7 +4,7 @@
     {
         public Node<T>? Root { get; set; }
 
-        public Node<T> Insert(T data)
+        public virtual Node<T> Insert(T data)
         {
             if (Root == null)
             {
@@ -83,36 +83,39 @@
             }
         }
 
-        public void Delete(T data)
+        public virtual Node<T>? Delete(T data)
         {
             var helpNode = Search(data);
-            if (helpNode != null)
-                DeleteNode(helpNode);
+            return DeleteNode(helpNode);
+                
         }
 
-        private void DeleteNode(Node<T> nodeToDelete)
+        //return parent node of deleting node if deleting leaf or node with one son
+        //return parent node of minimum node in right subtree (replacing node)
+        private Node<T>? DeleteNode(Node<T>? nodeToDelete)
         {
             if (nodeToDelete == null)
-                return;
+                return null;
 
+            var returningNode = nodeToDelete.Parent;
             //when deleting node is leaf
             if (nodeToDelete.IsLeaf())
             {
                 if (nodeToDelete.Parent == null)
                 {
                     Root = null;
-                    return;
+                    return returningNode;
                 }
 
                 if (nodeToDelete == nodeToDelete.Parent.LeftSon)
                 {
                     nodeToDelete.Parent.LeftSon = null;
-                    return;
+                    return returningNode;
                 }
                 else
                 {
                     nodeToDelete.Parent.RightSon = null;
-                    return;
+                    return returningNode;
                 }
             }
 
@@ -123,19 +126,20 @@
                 if (nodeToDelete.Parent == null)
                 {
                     Root = nodeToDelete.LeftSon;
-                    return;
+                    return returningNode;
                 }
+
                 if (nodeToDelete == nodeToDelete.Parent.LeftSon)
                 {
                     nodeToDelete.Parent.LeftSon = nodeToDelete.LeftSon;
                     nodeToDelete.LeftSon.Parent = nodeToDelete.Parent;
-                    return;
+                    return returningNode;
                 }
                 else
                 {
                     nodeToDelete.Parent.RightSon = nodeToDelete.LeftSon;
                     nodeToDelete.LeftSon.Parent = nodeToDelete.Parent;
-                    return;
+                    return returningNode;
                 }
             }
             else if (nodeToDelete.LeftSon == null && nodeToDelete.RightSon != null)
@@ -143,25 +147,28 @@
                 if (nodeToDelete.Parent == null)
                 {
                     Root = nodeToDelete.RightSon;
-                    return;
+                    return returningNode;
                 }
+
                 if (nodeToDelete == nodeToDelete.Parent.LeftSon)
                 {
                     nodeToDelete.Parent.LeftSon = nodeToDelete.RightSon;
                     nodeToDelete.RightSon.Parent = nodeToDelete.Parent;
-                    return;
+                    return returningNode;
                 }
                 else
                 {
                     nodeToDelete.Parent.RightSon = nodeToDelete.RightSon;
                     nodeToDelete.RightSon.Parent = nodeToDelete.Parent;
-                    return;
+                    return returningNode;
                 }
             }
-            //when deleting note has 2 sons --- not done :/
+
+            //when deleting note has 2 sons
             else if (nodeToDelete.LeftSon != null && nodeToDelete.RightSon != null)
             {
                 var minRight = FindMinimum(nodeToDelete.RightSon);
+                returningNode = minRight.Parent;
                 nodeToDelete.Data = minRight.Data;
 
 
@@ -170,12 +177,12 @@
                     if (minRight.IsLeaf())
                     {
                         minRight.Parent.LeftSon = null;
-                        return;
+                        return returningNode;
                     }
                     else
                     {
                         minRight.Parent.LeftSon = minRight.RightSon;
-                        return;
+                        return returningNode;
                     }
 
                 }
@@ -184,18 +191,19 @@
                     if (minRight.IsLeaf())
                     {
                         minRight.Parent.RightSon = null;
-                        return;
+                        return returningNode;
                     }
                     else
                     {
                         minRight.Parent.RightSon = minRight.RightSon;
-                        return;
+                        return returningNode;
                     }
                 }
             }
+            return null;
         }
 
-        public Node<T> FindMinimum(Node<T> startingNode)
+        private Node<T> FindMinimum(Node<T> startingNode)
         {
             var helpNode = startingNode;
             while (helpNode.LeftSon != null)

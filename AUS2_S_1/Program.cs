@@ -1,5 +1,5 @@
-﻿using AUS2_S_1.Trees;
-using AUS2_S_1.Trees.AVLTree;
+﻿using AUS2_S_1.Trees.AVLTree;
+using AUS2_S_1.Trees.BinarySearchTree;
 
 namespace AUS2_S_1
 {
@@ -8,9 +8,10 @@ namespace AUS2_S_1
         static void Main()
         {
             //int[] numbers = [8, 3, 10, 1, 6, 14, 4, 7, 13];
-            int[] numbers = [20, 15, 25, 10, 18, 23, 30, 5, 12, 1];
+            int[] numbers = [44,17,62,32,50,78,48,54,70,88];
 
             //BST<int> bstTest = new();
+            //bstTest.Insert();
 
             //for (int i = 0; i < numbers.Length; i++)
             //{
@@ -38,6 +39,7 @@ namespace AUS2_S_1
                 avltTest.Insert(number);
             }
 
+            avltTest.Delete(32);
             //avltTest.RightRotation(avltTest.Search(15));
 
             Console.WriteLine("ajal");

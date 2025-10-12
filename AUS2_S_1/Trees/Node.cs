@@ -31,12 +31,6 @@ namespace AUS2_S_1.Trees
             Height = 1 + Math.Max(leftSonHeight, rightSonHeight);
             BF = leftSonHeight - rightSonHeight;
         }
-
-        public void RecalculateHeightAndBFSubtree(Node<T> node)
-        {
-
-        }
-
-        
+      
     }
 }

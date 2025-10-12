@@ -5,22 +5,26 @@ namespace AUS2_S_1.Trees.AVLTree
     public class AVLT<T> : BST<T> where T : IComparable<T>
     {
 
-        public new Node<T> Insert(T data)
+        public override Node<T> Insert(T data)
         {
             var insertedNode = base.Insert(data);
             var helpNode = insertedNode;
 
-            while (helpNode != null)
-            {
-                helpNode.RecalculateHeightAndBF();
-                CheckAndRebalance(helpNode);
-                helpNode = helpNode.Parent;
-            }
+            CheckAndRebalance(helpNode);
 
             return insertedNode;
         }
 
-        public void RightRotation(Node<T> node)
+        public override Node<T>? Delete(T data)
+        {
+            var helpNode = base.Delete(data);
+
+            CheckAndRebalance(helpNode);
+
+            return helpNode;
+        }
+
+        private void RightRotation(Node<T> node)
         {
             var leftSon = node.LeftSon;
             var leftSonRightSon = node.LeftSon!.RightSon;
@@ -52,7 +56,7 @@ namespace AUS2_S_1.Trees.AVLTree
             leftSon.RecalculateHeightAndBF();
         }
 
-        public void LeftRotation(Node<T> node)
+        private void LeftRotation(Node<T> node)
         {
             var rightSon = node.RightSon;
             var rightSonLeftSon = node.RightSon!.LeftSon;
@@ -85,32 +89,39 @@ namespace AUS2_S_1.Trees.AVLTree
             rightSon.RecalculateHeightAndBF();
         }
 
-        public void CheckAndRebalance(Node<T> node)
+        private void CheckAndRebalance(Node<T>? node)
         {
-            if (node.BF > 1)
+            while (node != null)
             {
-                if (node.LeftSon!.BF >= 0)
-                {
-                    RightRotation(node);
-                }
-                else
-                {
-                    LeftRotation(node.LeftSon);
-                    RightRotation(node);
-                }  
-            }
+                node.RecalculateHeightAndBF();
 
-            if (node.BF < -1)
-            {
-                if (node.RightSon!.BF <= 0)
+                if (node.BF > 1)
                 {
-                    LeftRotation(node);
+                    if (node.LeftSon!.BF >= 0)
+                    {
+                        RightRotation(node);
+                    }
+                    else
+                    {
+                        LeftRotation(node.LeftSon);
+                        RightRotation(node);
+                    }
                 }
-                else
+
+                if (node.BF < -1)
                 {
-                    RightRotation(node.RightSon);
-                    LeftRotation(node);
+                    if (node.RightSon!.BF <= 0)
+                    {
+                        LeftRotation(node);
+                    }
+                    else
+                    {
+                        RightRotation(node.RightSon);
+                        LeftRotation(node);
+                    }
                 }
+
+                node = node.Parent;
             }
         }
 
