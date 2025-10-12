@@ -38,7 +38,7 @@ namespace AUS2_S_1
                 avltTest.Insert(number);
             }
 
-            avltTest.RightRotation(avltTest.Search(15));
+            //avltTest.RightRotation(avltTest.Search(15));
 
             Console.WriteLine("ajal");
         }

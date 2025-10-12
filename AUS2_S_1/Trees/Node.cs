@@ -37,9 +37,6 @@ namespace AUS2_S_1.Trees
 
         }
 
-        public void CheckAndRebalance(Node<T> node)
-        {
-
-        }
+        
     }
 }

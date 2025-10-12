@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using AUS2_S_1.Trees.BinarySearchTree;
+﻿using AUS2_S_1.Trees.BinarySearchTree;
 
 namespace AUS2_S_1.Trees.AVLTree
 {
@@ -9,8 +8,14 @@ namespace AUS2_S_1.Trees.AVLTree
         public new Node<T> Insert(T data)
         {
             var insertedNode = base.Insert(data);
-            insertedNode.Height = 0;
-            insertedNode.BF = 0;
+            var helpNode = insertedNode;
+
+            while (helpNode != null)
+            {
+                helpNode.RecalculateHeightAndBF();
+                CheckAndRebalance(helpNode);
+                helpNode = helpNode.Parent;
+            }
 
             return insertedNode;
         }
@@ -42,6 +47,9 @@ namespace AUS2_S_1.Trees.AVLTree
 
             leftSon.RightSon = node;
             node.Parent = leftSon;
+
+            node.RecalculateHeightAndBF();
+            leftSon.RecalculateHeightAndBF();
         }
 
         public void LeftRotation(Node<T> node)
@@ -72,6 +80,38 @@ namespace AUS2_S_1.Trees.AVLTree
 
             rightSon.LeftSon = node;
             node.Parent = rightSon;
+
+            node.RecalculateHeightAndBF();
+            rightSon.RecalculateHeightAndBF();
+        }
+
+        public void CheckAndRebalance(Node<T> node)
+        {
+            if (node.BF > 1)
+            {
+                if (node.LeftSon!.BF >= 0)
+                {
+                    RightRotation(node);
+                }
+                else
+                {
+                    LeftRotation(node.LeftSon);
+                    RightRotation(node);
+                }  
+            }
+
+            if (node.BF < -1)
+            {
+                if (node.RightSon!.BF <= 0)
+                {
+                    LeftRotation(node);
+                }
+                else
+                {
+                    RightRotation(node.RightSon);
+                    LeftRotation(node);
+                }
+            }
         }
 
     }
