@@ -1,11 +1,15 @@
-﻿using AUS2_S_1.Trees.BinarySearchTree;
+﻿using AUS2_S_1.Trees.BaseTree;
 
 namespace AUS2_S_1.Trees.AVLTree
 {
-    public class AVLT<T> : BST<T> where T : IComparable<T>
+    public class AVLT<T> : BaseBST<AVLTNode<T>, T> where T : IComparable<T>
     {
+        protected override AVLTNode<T> CreateNode(T data)
+        {
+            return new AVLTNode<T>(data);
+        }
 
-        public override Node<T> Insert(T data)
+        public override AVLTNode<T> Insert(T data)
         {
             var insertedNode = base.Insert(data);
             var helpNode = insertedNode;
@@ -15,7 +19,7 @@ namespace AUS2_S_1.Trees.AVLTree
             return insertedNode;
         }
 
-        public override Node<T>? Delete(T data)
+        public override AVLTNode<T>? Delete(T data)
         {
             var helpNode = base.Delete(data);
 
@@ -24,7 +28,7 @@ namespace AUS2_S_1.Trees.AVLTree
             return helpNode;
         }
 
-        private void RightRotation(Node<T> node)
+        private void RightRotation(AVLTNode<T> node)
         {
             var leftSon = node.LeftSon;
             var leftSonRightSon = node.LeftSon!.RightSon;
@@ -56,7 +60,7 @@ namespace AUS2_S_1.Trees.AVLTree
             leftSon.RecalculateHeightAndBF();
         }
 
-        private void LeftRotation(Node<T> node)
+        private void LeftRotation(AVLTNode<T> node)
         {
             var rightSon = node.RightSon;
             var rightSonLeftSon = node.RightSon!.LeftSon;
@@ -89,7 +93,7 @@ namespace AUS2_S_1.Trees.AVLTree
             rightSon.RecalculateHeightAndBF();
         }
 
-        private void CheckAndRebalance(Node<T>? node)
+        private void CheckAndRebalance(AVLTNode<T>? node)
         {
             while (node != null)
             {
