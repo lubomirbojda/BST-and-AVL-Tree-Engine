@@ -9,24 +9,30 @@ namespace AUS2_S_1.Trees.AVLTree
             return new AVLTNode<T>(data);
         }
 
-        public override AVLTNode<T> Insert(T data)
+        public override bool Insert(T data)
         {
-            var insertedNode = base.Insert(data);
-            var helpNode = insertedNode;
-
-            CheckAndRebalance(helpNode);
-
-            return insertedNode;
+            var insertedNode = InsertNode(data);
+            if (insertedNode != null)
+            {
+                CheckAndRebalance(insertedNode);
+                return true;
+            }
+            return false;
         }
 
-        public override AVLTNode<T>? Delete(T data)
+        public override bool Delete(T data)
         {
-            var helpNode = base.Delete(data);
-
-            CheckAndRebalance(helpNode);
-
-            return helpNode;
+            var helpNode = FindNode(data);
+            if (helpNode != null)
+            {
+                var rebalancingNode = DeleteNode(helpNode);
+                CheckAndRebalance(rebalancingNode);
+                return true;
+            }
+            
+            return false;     
         }
+
 
         private void RightRotation(AVLTNode<T> node)
         {

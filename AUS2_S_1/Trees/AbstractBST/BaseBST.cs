@@ -6,7 +6,15 @@
 
         protected abstract TNode CreateNode(TData data);
 
-        public virtual TNode Insert(TData data)
+        public virtual bool Insert(TData data)
+        {
+            if (InsertNode(data) == null)
+                return false;
+
+            return true;
+        }
+
+        protected virtual TNode? InsertNode(TData data)
         {
             if (Root == null)
             {
@@ -49,13 +57,22 @@
                 else
                 {
                     //when key is already in tree
-                    helpNode.Data = data;
-                    return helpNode;
+                    //helpNode.Data = data;
+                    return null;
                 }
             }
         }
 
-        public virtual TNode? Search(TData data)
+        public virtual TData? Find(TData data)
+        {
+            var foundData = FindNode(data);
+            if (foundData == null)
+                return default;
+
+            return foundData.Data;
+        }
+
+        protected virtual TNode? FindNode(TData data)
         {
             if (Root == null)
                 return null;
@@ -85,19 +102,23 @@
             }
         }
 
-        public virtual TNode? Delete(TData data)
+        public virtual bool Delete(TData data)
         {
-            var helpNode = Search(data);
-            return DeleteNode(helpNode);
+            var helpNode = FindNode(data);
+            if (helpNode != null)
+            {
+                DeleteNode(helpNode);
+                return true;
+            }
 
+            return false;
         }
+
 
         //return parent node of deleting node if deleting leaf or node with one son
         //return parent node of minimum node in right subtree (replacing node)
-        private TNode? DeleteNode(TNode? nodeToDelete)
+        protected virtual TNode? DeleteNode(TNode nodeToDelete)
         {
-            if (nodeToDelete == null)
-                return null;
 
             var returningNode = nodeToDelete.Parent;
             //when deleting node is leaf
