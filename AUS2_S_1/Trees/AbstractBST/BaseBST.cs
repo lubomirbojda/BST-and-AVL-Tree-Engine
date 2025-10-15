@@ -226,6 +226,38 @@
             return null;
         }
 
+        public IEnumerable<TData> InOrder()
+        {
+            if (Root == null)
+                yield break;
+
+            var nodesStack = new Stack<TNode>();
+
+            var helpNode = Root;
+
+            while (nodesStack.Count != 0 || helpNode != null)
+            {
+                while (helpNode != null)
+                {
+                    nodesStack.Push(helpNode);
+                    helpNode = helpNode.LeftSon;
+                }
+                helpNode = nodesStack.Pop();
+                yield return helpNode.Data;
+
+                helpNode = helpNode.RightSon;
+            }
+        }
+
+        public IEnumerable<TData> FindInterval(TData min, TData max)
+        {
+            if (Root == null)
+                yield break;
+
+            var helpNode = Root;
+
+        }
+
         private TNode FindMinimum(TNode startingNode)
         {
             var helpNode = startingNode;

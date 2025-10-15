@@ -8,7 +8,7 @@ namespace AUS2_S_1
         static void Main()
         {
             //int[] numbers = [8, 3, 10, 1, 6, 14, 4, 7, 13];
-            int[] numbers = [44,17,62,32,50,78,48,54,70,88];
+            int[] numbers = [32,16,48,8,24,40,56,4,12,20,28,36,44,52,60,2,6,10,14,18,22,26,30,34,38,42,46,50,54,58,62, 1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63];
 
             //BST<int> bstTest = new();
             //bstTest.Insert();
@@ -39,10 +39,15 @@ namespace AUS2_S_1
                 avltTest.Insert(number);
             }
 
-            avltTest.Delete(32);
+            foreach (var n in avltTest.InOrder())
+            {
+                Console.Write(n + "-> ");
+            }
+
+            //avltTest.Delete(32);
             //avltTest.RightRotation(avltTest.Search(15));
 
-            Console.WriteLine("ajal");
+            //Console.WriteLine("ajal");
         }
     }
 }
