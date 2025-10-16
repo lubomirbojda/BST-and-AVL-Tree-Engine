@@ -254,7 +254,29 @@
             if (Root == null)
                 yield break;
 
+            var nodesStack = new Stack<TNode>();
             var helpNode = Root;
+
+            while (nodesStack.Count != 0 || helpNode != null)
+            {
+                while (helpNode != null)
+                {
+                    nodesStack.Push(helpNode);
+                    if (helpNode.Data.CompareTo(min) < 0)
+                    {
+                        break;
+                    }
+                    helpNode = helpNode.LeftSon;
+                }
+
+
+                helpNode = nodesStack.Pop();
+
+                if (helpNode.Data.CompareTo(min) >= 0 && helpNode.Data.CompareTo(max) <= 0)
+                    yield return helpNode.Data;
+
+                helpNode = helpNode.RightSon;
+            }
 
         }
 
