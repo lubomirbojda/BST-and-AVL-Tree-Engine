@@ -223,29 +223,65 @@
                     }
                 }
             }
-            return null;
+            return returningNode;
         }
+
+
 
         public IEnumerable<TData> InOrder()
         {
             if (Root == null)
                 yield break;
 
-            var nodesStack = new Stack<TNode>();
-
             var helpNode = Root;
+            var lastNode = Root.Parent;
+            TNode? nextNode;
 
-            while (nodesStack.Count != 0 || helpNode != null)
+            while (helpNode != null)
             {
-                while (helpNode != null)
+                if (lastNode == helpNode.Parent)
                 {
-                    nodesStack.Push(helpNode);
-                    helpNode = helpNode.LeftSon;
+                    if (helpNode.LeftSon != null)
+                    {
+                        nextNode = helpNode.LeftSon;
+                    }
+                    else
+                    {
+                        yield return helpNode.Data;
+                        if (helpNode.RightSon != null)
+                        {
+                            nextNode = helpNode.RightSon;
+                        }
+                        else
+                        {
+                            nextNode = helpNode.Parent;
+                        }
+                    }
                 }
-                helpNode = nodesStack.Pop();
-                yield return helpNode.Data;
+                else
+                {
+                    if (lastNode == helpNode.LeftSon)
+                    {
+                        yield return helpNode.Data;
+                        if (helpNode.RightSon != null)
+                        {
+                            nextNode = helpNode.RightSon;
+                        }
+                        else
+                        {
+                            nextNode = helpNode.Parent;
+                        }
+                    }
+                    else
+                    {
+                        nextNode = helpNode.Parent;
+                    }
+                }
 
-                helpNode = helpNode.RightSon;
+
+
+                lastNode = helpNode;
+                helpNode = nextNode;
             }
         }
 
@@ -254,30 +290,58 @@
             if (Root == null)
                 yield break;
 
-            var nodesStack = new Stack<TNode>();
             var helpNode = Root;
+            var lastNode = Root.Parent;
+            TNode? nextNode;
 
-            while (nodesStack.Count != 0 || helpNode != null)
+            while (helpNode != null)
             {
-                while (helpNode != null)
+                if (lastNode == helpNode.Parent)
                 {
-                    nodesStack.Push(helpNode);
-                    if (helpNode.Data.CompareTo(min) < 0)
+                    if (helpNode.LeftSon != null && helpNode.Data.CompareTo(min) > 0)
                     {
-                        break;
+                        nextNode = helpNode.LeftSon;
                     }
-                    helpNode = helpNode.LeftSon;
+                    else
+                    {
+                        if (helpNode.Data.CompareTo(min) >= 0 && helpNode.Data.CompareTo(max) <= 0)
+                            yield return helpNode.Data;
+
+                        if (helpNode.RightSon != null && helpNode.Data.CompareTo(max) < 0)
+                        {
+                            nextNode = helpNode.RightSon;
+                        }
+                        else
+                        {
+                            nextNode = helpNode.Parent;
+                        }
+                    }
+                }
+                else
+                {
+                    if (lastNode == helpNode.LeftSon)
+                    {
+                        if (helpNode.Data.CompareTo(min) >= 0 && helpNode.Data.CompareTo(max) <= 0)
+                            yield return helpNode.Data;
+
+                        if (helpNode.RightSon != null && helpNode.Data.CompareTo(max) < 0)
+                        {
+                            nextNode = helpNode.RightSon;
+                        }
+                        else
+                        {
+                            nextNode = helpNode.Parent;
+                        }
+                    }
+                    else
+                    {
+                        nextNode = helpNode.Parent;
+                    }
                 }
 
-
-                helpNode = nodesStack.Pop();
-
-                if (helpNode.Data.CompareTo(min) >= 0 && helpNode.Data.CompareTo(max) <= 0)
-                    yield return helpNode.Data;
-
-                helpNode = helpNode.RightSon;
+                lastNode = helpNode;
+                helpNode = nextNode;
             }
-
         }
 
         private TNode FindMinimum(TNode startingNode)
@@ -288,6 +352,14 @@
                 helpNode = helpNode.LeftSon;
             }
             return helpNode;
+        }
+
+        public TNode? FindMinimum()
+        {
+            if (Root == null)
+                return null;
+
+            return FindMinimum(Root);
         }
     }
 }
