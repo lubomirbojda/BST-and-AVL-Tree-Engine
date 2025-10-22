@@ -64,6 +64,8 @@ namespace AUS2_S_1.Trees.AVLTree
 
             node.RecalculateHeightAndBF();
             leftSon.RecalculateHeightAndBF();
+
+
         }
 
         private void LeftRotation(AVLTNode<T> node)
@@ -97,6 +99,7 @@ namespace AUS2_S_1.Trees.AVLTree
 
             node.RecalculateHeightAndBF();
             rightSon.RecalculateHeightAndBF();
+
         }
 
         private void CheckAndRebalance(AVLTNode<T>? node)
@@ -133,6 +136,22 @@ namespace AUS2_S_1.Trees.AVLTree
 
                 node = node.Parent;
             }
+        }
+
+
+        public bool IsAVLTBalanced()
+        {
+            if (Root == null) return true;
+
+            foreach (var node in InOrder(Root))
+            {
+                node.RecalculateHeightAndBF();
+                var bf = node.BF;
+                if (bf < -1 || bf > 1)
+                    return false;
+            }
+
+            return true;
         }
 
     }

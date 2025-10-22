@@ -149,6 +149,7 @@
                 if (nodeToDelete.Parent == null)
                 {
                     Root = nodeToDelete.LeftSon;
+                    Root.Parent = null;
                     return returningNode;
                 }
 
@@ -170,6 +171,7 @@
                 if (nodeToDelete.Parent == null)
                 {
                     Root = nodeToDelete.RightSon;
+                    Root.Parent = null;
                     return returningNode;
                 }
 
@@ -205,6 +207,7 @@
                     else
                     {
                         minRight.Parent.LeftSon = minRight.RightSon;
+                        minRight.RightSon!.Parent = minRight.Parent;
                         return returningNode;
                     }
 
@@ -219,6 +222,7 @@
                     else
                     {
                         minRight.Parent.RightSon = minRight.RightSon;
+                        minRight.RightSon!.Parent = minRight.Parent;
                         return returningNode;
                     }
                 }
@@ -226,15 +230,13 @@
             return returningNode;
         }
 
-
-
-        public IEnumerable<TData> InOrder()
+        protected IEnumerable<TNode> InOrder(TNode node)
         {
-            if (Root == null)
+            if (node == null)
                 yield break;
 
-            var helpNode = Root;
-            var lastNode = Root.Parent;
+            var helpNode = node;
+            var lastNode = node.Parent;
             TNode? nextNode;
 
             while (helpNode != null)
@@ -247,7 +249,7 @@
                     }
                     else
                     {
-                        yield return helpNode.Data;
+                        yield return helpNode;
                         if (helpNode.RightSon != null)
                         {
                             nextNode = helpNode.RightSon;
@@ -262,7 +264,7 @@
                 {
                     if (lastNode == helpNode.LeftSon)
                     {
-                        yield return helpNode.Data;
+                        yield return helpNode;
                         if (helpNode.RightSon != null)
                         {
                             nextNode = helpNode.RightSon;
@@ -284,6 +286,18 @@
                 helpNode = nextNode;
             }
         }
+
+        public IEnumerable<TData> InOrder()
+        {
+            if (Root == null)
+                yield break;
+
+            foreach (var node in InOrder(Root))
+            {
+                yield return node.Data;
+            }
+        }
+
 
         public IEnumerable<TData> FindInterval(TData min, TData max)
         {
@@ -354,12 +368,30 @@
             return helpNode;
         }
 
-        public TNode? FindMinimum()
+        public TData? FindMinimum()
         {
             if (Root == null)
-                return null;
+                return default;
 
-            return FindMinimum(Root);
+            return FindMinimum(Root).Data;
+        }
+
+        private TNode FindMaximum(TNode startingNode)
+        {
+            var helpNode = startingNode;
+            while (helpNode.RightSon != null)
+            {
+                helpNode = helpNode.RightSon;
+            }
+            return helpNode;
+        }
+
+        public TData? FindMaximum()
+        {
+            if (Root == null)
+                return default;
+
+            return FindMaximum(Root).Data;
         }
     }
 }
