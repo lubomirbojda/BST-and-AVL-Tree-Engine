@@ -1,4 +1,6 @@
-﻿namespace AUS2_S_1.Trees.BaseTree
+﻿using AUS2_S_1.Trees.AVLTree;
+
+namespace AUS2_S_1.Trees.BaseTree
 {
     public abstract class BaseBST<TNode, TData> where TData : IComparable<TData> where TNode : BaseBSTNode<TNode, TData>
     {
@@ -392,6 +394,17 @@
                 return default;
 
             return FindMaximum(Root).Data;
+        }
+
+        public bool IsInOrderSorted()
+        {
+            var list = InOrder().ToList();
+            for (int i = 1; i < list.Count; i++)
+            {
+                if (list[i - 1].CompareTo(list[i]) > 0)
+                    return false;
+            }
+            return true;
         }
     }
 }

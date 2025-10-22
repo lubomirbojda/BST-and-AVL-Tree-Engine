@@ -261,10 +261,11 @@ namespace AUS2_S_1.Tests
             swSs.Reset();
         }
 
-        public void TestAVL()
+        public void TestAVLandBST()
         {
             var rand = new Random();
             var avl = new AVLT<int>();
+            var bst = new BST<int>();
             var hsData = new HashSet<int>();
 
             int operations = 1_000_000;
@@ -278,43 +279,88 @@ namespace AUS2_S_1.Tests
                 if (operation < 0.4)
                 {
                     avl.Insert(value);
+                    bst.Insert(value);
                     hsData.Add(value);
                 }
                 //delete
+                else if (operation < 0.7)
+                {
+                    if (hsData.Count > 0)
+                    {
+                        var randInTree = rand.Next(0, hsData.Count);
+                        value = hsData.ElementAt(randInTree);
+                        if (!avl.Delete(value))
+                        {
+                            Console.WriteLine("Error at deleting - AVL.");
+                            return;
+                        }
+                        if (!bst.Delete(value))
+                        {
+                            Console.WriteLine("Error at deleting - BST.");
+                            return;
+                        }
+                        hsData.Remove(value);
+                    }
+                }
+                //find
                 else if (operation < 0.8)
                 {
                     if (hsData.Count > 0)
                     {
                         var randInTree = rand.Next(0, hsData.Count);
                         value = hsData.ElementAt(randInTree);
-                        avl.Delete(value);
-                        hsData.Remove(value);
-                    }
-                }
-                //find
-                else
-                {
-                    if (hsData.Count > 0)
-                    {
-                        var randInTree = rand.Next(0, hsData.Count);
-                        value = hsData.ElementAt(randInTree);
-                        bool found = avl.Find(value) != default;
+                        bool foundAVL = avl.Find(value) != default;
+                        bool foundBST = bst.Find(value) != default;
                         bool shouldExist = hsData.Contains(value);
 
-                        if (found != shouldExist)
+                        if (foundAVL != shouldExist)
                         {
-                            Console.WriteLine("Error at finding.");
+                            Console.WriteLine("Error at finding - AVL.");
+                            return;
+                        }
+                        if (foundBST != shouldExist)
+                        {
+                            Console.WriteLine("Error at finding - BST.");
                             return;
                         }
                     }
-                    
+
+                }
+                //interval find
+                else
+                {
+                    var interval = hsData.OrderBy(x => x).ToList();
+                    var minIndex = rand.Next(0, interval.Count);
+                    var maxIndex = rand.Next(minIndex, interval.Count);
+                    var min = interval[minIndex];
+                    var max = interval[maxIndex];
+                    var intervalCompare = interval.GetRange(minIndex, maxIndex - minIndex + 1);
+                    var bstIntFind = bst.FindInterval(min, max).ToArray();
+                    var avlIntFind = avl.FindInterval(min, max).ToArray();
+
+                    if (!bstIntFind.SequenceEqual(intervalCompare))
+                    {
+                        Console.WriteLine("Error at interval finding - BST.");
+                        return;
+                    }
+                    if (!avlIntFind.SequenceEqual(intervalCompare))
+                    {
+                        Console.WriteLine("Error at interval finding - AVL.");
+                        return;
+                    }
                 }
 
-                if (i % 5000 == 0)
+                if (i % 10 == 0)
                 {
-                    if (!IsInOrderSorted(avl))
+                    if (!avl.IsInOrderSorted())
                     {
-                        Console.WriteLine("InOrder not in order.");
+                        Console.WriteLine("InOrder not in order - AVL");
+                        return;
+                    }
+
+                    if (!bst.IsInOrderSorted())
+                    {
+                        Console.WriteLine("InOrder not in order - BST.");
                         return;
                     }
 
@@ -329,16 +375,6 @@ namespace AUS2_S_1.Tests
             Console.WriteLine("Test successful.");
         }
 
-        private bool IsInOrderSorted(AVLT<int> avltree)
-        {
-            var list = avltree.InOrder().ToList();
-            for (int i = 1; i < list.Count; i++)
-            {
-                if (list[i - 1].CompareTo(list[i]) > 0)
-                    return false;
-            }
-            return true;
-        }
 
         private int[] GetRandomValues(int numberOfValues)
         {

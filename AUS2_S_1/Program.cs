@@ -10,7 +10,7 @@ namespace AUS2_S_1
 
             //tester.TestOperationsTime();
 
-            tester.TestAVL();
+            tester.TestAVLandBST();
         }
     }
 }
