@@ -8,9 +8,9 @@ namespace AUS2_S_1
         {
             var tester = new Tester();
 
-            //tester.TestOperationsTime();
+            tester.TestOperationsTime();
 
-            tester.TestAVLandBST();
+            //tester.TestAVLandBST();
         }
     }
 }

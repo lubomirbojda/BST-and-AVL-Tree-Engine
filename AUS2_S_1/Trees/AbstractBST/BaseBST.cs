@@ -1,5 +1,3 @@
-﻿using AUS2_S_1.Trees.AVLTree;
-
 namespace AUS2_S_1.Trees.BaseTree
 {
     public abstract class BaseBST<TNode, TData> where TData : IComparable<TData> where TNode : BaseBSTNode<TNode, TData>

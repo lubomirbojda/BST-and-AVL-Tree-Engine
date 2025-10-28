@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Globalization;
 using AUS2_S_1.Trees.AVLTree;
 using AUS2_S_1.Trees.BinarySearchTree;
 
@@ -23,13 +21,6 @@ namespace AUS2_S_1.Tests
             Console.WriteLine("Inserting " + numberOfElements + " elements...");
             int[] elements = GetRandomValues(numberOfElements);
 
-            swAvlt.Start();
-            foreach (var value in elements)
-            {
-                avltTest.Insert(value);
-            }
-            swAvlt.Stop();
-
             swBst.Start();
             foreach (var value in elements)
             {
@@ -37,6 +28,13 @@ namespace AUS2_S_1.Tests
                 bstTest.Insert(value);
             }
             swBst.Stop();
+
+            swAvlt.Start();
+            foreach (var value in elements)
+            {
+                avltTest.Insert(value);
+            }
+            swAvlt.Stop();
 
             swSs.Start();
             foreach (var value in elements)
@@ -62,19 +60,19 @@ namespace AUS2_S_1.Tests
             var helpArray = elements.Take(numberOfElementsToDelete).ToArray();
             elements = elements.Skip(numberOfElementsToDelete).ToArray();
 
-            swAvlt.Start();
-            foreach (var value in helpArray)
-            {
-                avltTest.Delete(value);
-            }
-            swAvlt.Stop();
-
             swBst.Start();
             foreach (var value in helpArray)
             {
                 bstTest.Delete(value);
             }
             swBst.Stop();
+
+            swAvlt.Start();
+            foreach (var value in helpArray)
+            {
+                avltTest.Delete(value);
+            }
+            swAvlt.Stop();
 
             swSs.Start();
             foreach (var value in elements)
@@ -98,19 +96,19 @@ namespace AUS2_S_1.Tests
             rand.Shuffle(elements);
             helpArray = elements.Take(numberOfElementsToFind).ToArray();
 
-            swAvlt.Start();
-            foreach (var value in helpArray)
-            {
-                avltTest.Find(value);
-            }
-            swAvlt.Stop();
-
             swBst.Start();
             foreach (var value in helpArray)
             {
                 bstTest.Find(value);
             }
             swBst.Stop();
+
+            swAvlt.Start();
+            foreach (var value in helpArray)
+            {
+                avltTest.Find(value);
+            }
+            swAvlt.Stop();
 
             swSs.Start();
             foreach (var value in helpArray)
@@ -137,17 +135,6 @@ namespace AUS2_S_1.Tests
             helpArray = elements.OrderBy(x => x).ToArray();
 
             rand = new Random(seed);
-            swAvlt.Start();
-            for (int i = 0; i < numberOfTests; i++)
-            {
-                int startIndex = rand.Next(0, helpArray.Length - minResultsPerInterval);
-                int min = helpArray[startIndex];
-                int max = helpArray[startIndex + minResultsPerInterval];
-                var interval = avltTest.FindInterval(min, max).ToList();
-            }
-            swAvlt.Stop();
-
-            rand = new Random(seed);
             swBst.Start();
             for (int i = 0; i < numberOfTests; i++)
             {
@@ -157,6 +144,17 @@ namespace AUS2_S_1.Tests
                 var interval = bstTest.FindInterval(min, max).ToList();
             }
             swBst.Stop();
+
+            rand = new Random(seed);
+            swAvlt.Start();
+            for (int i = 0; i < numberOfTests; i++)
+            {
+                int startIndex = rand.Next(0, helpArray.Length - minResultsPerInterval);
+                int min = helpArray[startIndex];
+                int max = helpArray[startIndex + minResultsPerInterval];
+                var interval = avltTest.FindInterval(min, max).ToList();
+            }
+            swAvlt.Stop();
 
             rand = new Random(seed);
             swSs.Start();
@@ -185,13 +183,6 @@ namespace AUS2_S_1.Tests
             int numberOfReps = 2_000_000;
             Console.WriteLine("Finding minimum " + numberOfReps + " times...");
 
-            swAvlt.Start();
-            for (int i = 0; i < numberOfReps; i++)
-            {
-                var min = avltTest.FindMinimum();
-            }
-            swAvlt.Stop();
-
             swBst.Start();
             for (int i = 0; i < numberOfReps; i++)
             {
@@ -199,6 +190,15 @@ namespace AUS2_S_1.Tests
             }
             swBst.Stop();
 
+
+            swAvlt.Start();
+            for (int i = 0; i < numberOfReps; i++)
+            {
+                var min = avltTest.FindMinimum();
+            }
+            swAvlt.Stop();
+
+            
             swSs.Start();
             for (int i = 0; i < numberOfReps; i++)
             {
@@ -222,19 +222,19 @@ namespace AUS2_S_1.Tests
             numberOfReps = 2_000_000;
             Console.WriteLine("Finding maximum " + numberOfReps + " times...");
 
-            swAvlt.Start();
-            for (int i = 0; i < numberOfReps; i++)
-            {
-                var min = avltTest.FindMaximum();
-            }
-            swAvlt.Stop();
-
             swBst.Start();
             for (int i = 0; i < numberOfReps; i++)
             {
                 var min = bstTest.FindMaximum();
             }
             swBst.Stop();
+
+            swAvlt.Start();
+            for (int i = 0; i < numberOfReps; i++)
+            {
+                var min = avltTest.FindMaximum();
+            }
+            swAvlt.Stop();
 
             swSs.Start();
             for (int i = 0; i < numberOfReps; i++)
