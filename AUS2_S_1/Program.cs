@@ -1,4 +1,4 @@
-﻿using AUS2_S_1.Tests;
+using AUS2_S_1.Tests;
 
 namespace AUS2_S_1
 {
@@ -8,9 +8,9 @@ namespace AUS2_S_1
         {
             var tester = new Tester();
 
-            tester.TestOperationsTime();
+            //tester.TestOperationsTime();
 
-            //tester.TestAVLandBST();
+            tester.TestAVLandBST();
         }
     }
 }

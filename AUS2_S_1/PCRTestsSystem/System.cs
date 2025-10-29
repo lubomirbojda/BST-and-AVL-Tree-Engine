@@ -18,6 +18,13 @@ namespace AUS2_S_1.PCRTestsSystem
 
             person.PCRTestsByID.Insert(new PCRTestByID(testToInsert.TestID));
 
+            var testWithRegionId = new PCRTestByRegion(testToInsert.RegionID);
+            if (PCRTestsByRegion.Insert(testWithRegionId))
+            {
+                PCRTestsByRegion.Find(testWithRegionId)!.PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert.DateAndTime));
+            }
+            
+
             return true;
         }
 
