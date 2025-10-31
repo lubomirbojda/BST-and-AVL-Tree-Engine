@@ -278,9 +278,23 @@ namespace AUS2_S_1.Tests
                 //insert
                 if (operation < 0.4)
                 {
+                    hsData.Add(value);
                     avl.Insert(value);
                     bst.Insert(value);
-                    hsData.Add(value);
+                    var intervalCompare = hsData.OrderBy(x => x).ToArray();
+                    var bstIntFind = bst.InOrder().ToArray();
+                    var avlIntFind = avl.InOrder().ToArray();
+
+                    if (!bstIntFind.SequenceEqual(intervalCompare))
+                    {
+                        Console.WriteLine("Error at interval finding - BST.");
+                        return;
+                    }
+                    if (!avlIntFind.SequenceEqual(intervalCompare))
+                    {
+                        Console.WriteLine("Error at interval finding - AVL.");
+                        return;
+                    }
                 }
                 //delete
                 else if (operation < 0.7)
@@ -328,26 +342,29 @@ namespace AUS2_S_1.Tests
                 }
                 //interval find
                 else
-                {
-                    var interval = hsData.OrderBy(x => x).ToList();
-                    var minIndex = rand.Next(0, interval.Count);
-                    var maxIndex = rand.Next(minIndex, interval.Count);
-                    var min = interval[minIndex];
-                    var max = interval[maxIndex];
-                    var intervalCompare = interval.GetRange(minIndex, maxIndex - minIndex + 1);
-                    var bstIntFind = bst.FindInterval(min, max).ToArray();
-                    var avlIntFind = avl.FindInterval(min, max).ToArray();
+                {            
+                    if (hsData.Count > 0)
+                    {
+                        var interval = hsData.OrderBy(x => x).ToList();
+                        var minIndex = rand.Next(0, interval.Count);
+                        var maxIndex = rand.Next(minIndex, interval.Count);
+                        var min = interval[minIndex];
+                        var max = interval[maxIndex];
+                        var intervalCompare = interval.GetRange(minIndex, maxIndex - minIndex + 1);
+                        var bstIntFind = bst.FindInterval(min, max).ToList();
+                        var avlIntFind = avl.FindInterval(min, max).ToList();
 
-                    if (!bstIntFind.SequenceEqual(intervalCompare))
-                    {
-                        Console.WriteLine("Error at interval finding - BST.");
-                        return;
-                    }
-                    if (!avlIntFind.SequenceEqual(intervalCompare))
-                    {
-                        Console.WriteLine("Error at interval finding - AVL.");
-                        return;
-                    }
+                        if (!bstIntFind.SequenceEqual(intervalCompare))
+                        {
+                            Console.WriteLine("Error at interval finding - BST.");
+                            return;
+                        }
+                        if (!avlIntFind.SequenceEqual(intervalCompare))
+                        {
+                            Console.WriteLine("Error at interval finding - AVL.");
+                            return;
+                        }
+                    }     
                 }
 
                 if (i % 10 == 0)

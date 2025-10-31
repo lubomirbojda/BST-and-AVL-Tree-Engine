@@ -1,6 +1,6 @@
 namespace AUS2_S_1.PCRTestsSystem.Data.Test
 {
-    public class BasePCRTest
+    public class PCRTest
     {
         public DateTime DateAndTime { get; private set; }
         public string PersonID { get; private set; }
@@ -12,7 +12,7 @@ namespace AUS2_S_1.PCRTestsSystem.Data.Test
         public double Value { get; private set; }
         public string? Note { get; private set; }
 
-        public BasePCRTest(DateTime dateAndTime, string personID, int testID, int testStationID, int districtID, int regionID, bool result, double value, string? note = null)
+        public PCRTest(DateTime dateAndTime, string personID, int testID, int testStationID, int districtID, int regionID, bool result, double value, string? note = null)
         {
             DateAndTime = dateAndTime;
             PersonID = personID;
@@ -23,6 +23,6 @@ namespace AUS2_S_1.PCRTestsSystem.Data.Test
             Result = result;
             Value = value;
             Note = note;
-        }
+        }       
     }
 }
