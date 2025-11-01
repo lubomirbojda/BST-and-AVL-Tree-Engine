@@ -1,4 +1,4 @@
-﻿using AUS2_S_1.Trees.BaseTree;
+using AUS2_S_1.Trees.BaseTree;
 
 namespace AUS2_S_1.Trees.AVLTree
 {
@@ -14,7 +14,8 @@ namespace AUS2_S_1.Trees.AVLTree
             var insertedNode = InsertNode(data);
             if (insertedNode != null)
             {
-                CheckAndRebalance(insertedNode);
+                //CheckAndRebalance(insertedNode.Parent, true);
+                RebalanceAfterInsert(insertedNode.Parent);
                 return true;
             }
             return false;
@@ -26,7 +27,8 @@ namespace AUS2_S_1.Trees.AVLTree
             if (helpNode != null)
             {
                 var rebalancingNode = DeleteNode(helpNode);
-                CheckAndRebalance(rebalancingNode);
+                RebalanceAfterDelete(rebalancingNode);
+                //CheckAndRebalance(rebalancingNode, false);
                 return true;
             }
             
@@ -62,8 +64,8 @@ namespace AUS2_S_1.Trees.AVLTree
             leftSon.RightSon = node;
             node.Parent = leftSon;
 
-            node.RecalculateHeightAndBF();
-            leftSon.RecalculateHeightAndBF();
+            node.RecalculateHeight();
+            leftSon.RecalculateHeight();
 
 
         }
@@ -97,20 +99,67 @@ namespace AUS2_S_1.Trees.AVLTree
             rightSon.LeftSon = node;
             node.Parent = rightSon;
 
-            node.RecalculateHeightAndBF();
-            rightSon.RecalculateHeightAndBF();
+            node.RecalculateHeight();
+            rightSon.RecalculateHeight();
 
         }
 
-        private void CheckAndRebalance(AVLTNode<T>? node)
+        private void RebalanceAfterInsert(AVLTNode<T>? node)
         {
             while (node != null)
             {
-                node.RecalculateHeightAndBF();
+                node.RecalculateHeight();
+                int nodeBF = node.GetBalanceFactor();
 
-                if (node.BF > 1)
+                if (nodeBF == 0) 
+                    return;
+
+                if (nodeBF > 1)
                 {
-                    if (node.LeftSon!.BF >= 0)
+                    if (node.LeftSon!.GetBalanceFactor() >= 0)
+                    {
+                        RightRotation(node);
+                    }
+                    else
+                    {
+                        LeftRotation(node.LeftSon);
+                        RightRotation(node);
+                    }
+                    return;
+                }
+
+                if (nodeBF < -1)
+                {
+                    if (node.RightSon!.GetBalanceFactor() <= 0)
+                    {
+                        LeftRotation(node);
+                    }
+                    else
+                    {
+                        RightRotation(node.RightSon);
+                        LeftRotation(node);
+                    }
+                    return;
+                }
+
+                node = node.Parent;
+            }
+        }
+
+        private void RebalanceAfterDelete(AVLTNode<T>? node)
+        {
+            while (node != null)
+            {
+                int nodeBFBeforeRebalance = node.GetBalanceFactor();
+                node.RecalculateHeight();
+                var nodeBF = node.GetBalanceFactor();
+
+                if (nodeBFBeforeRebalance == 0 && (Math.Abs(nodeBF) == 1))
+                    return;
+
+                if (nodeBF > 1)
+                {
+                    if (node.LeftSon!.GetBalanceFactor() >= 0)
                     {
                         RightRotation(node);
                     }
@@ -121,9 +170,9 @@ namespace AUS2_S_1.Trees.AVLTree
                     }
                 }
 
-                if (node.BF < -1)
+                if (nodeBF < -1)
                 {
-                    if (node.RightSon!.BF <= 0)
+                    if (node.RightSon!.GetBalanceFactor() <= 0)
                     {
                         LeftRotation(node);
                     }
@@ -138,15 +187,14 @@ namespace AUS2_S_1.Trees.AVLTree
             }
         }
 
-
         public bool IsAVLTBalanced()
         {
             if (Root == null) return true;
 
             foreach (var node in InOrder(Root))
             {
-                node.RecalculateHeightAndBF();
-                var bf = node.BF;
+                node.RecalculateHeight();
+                var bf = node.GetBalanceFactor();
                 if (bf < -1 || bf > 1)
                     return false;
             }

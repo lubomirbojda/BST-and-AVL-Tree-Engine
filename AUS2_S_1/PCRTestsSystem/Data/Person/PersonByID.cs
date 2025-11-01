@@ -6,7 +6,7 @@ namespace AUS2_S_1.PCRTestsSystem.Data.Person
     public class PersonByID : BasePersonComparable<PersonByID>
     {
         public AVLT<PCRTestByID> PCRTestsByID { get; private set; } = new AVLT<PCRTestByID>();
-        //public AVLT<PCRTestByDateAndTime> PCRTestsByDateAndTIme { get; private set; } = new AVLT<PCRTestByDateAndTime>();
+        public AVLT<PCRTestByDateAndTime> PCRTestsByDateAndTime { get; private set; } = new AVLT<PCRTestByDateAndTime>();
 
         public PersonByID(Person person) : base(person)
         {
