@@ -5,14 +5,14 @@ using AUS2_S_1.Trees.AVLTree;
 
 namespace AUS2_S_1.PCRTestsSystem
 {
-    public class System
+    public class PCRTestsSystem
     {
-        public AVLT<PersonByID> PersonsByID { get; private set; } = new AVLT<PersonByID>();
-        public AVLT<PCRTestByDistrict> PCRTestsByDistrict { get; private set; } = new AVLT<PCRTestByDistrict>();
-        public AVLT<PCRTestByRegion> PCRTestsByRegion { get; private set; } = new AVLT<PCRTestByRegion>();
-        public AVLT<PCRTestByDateAndTime> PCRTestsByDateAndTime { get; private set; } = new AVLT<PCRTestByDateAndTime>();
-        public AVLT<PCRTestByTestStation> PCRTestsByTestStation { get; private set; } = new AVLT<PCRTestByTestStation>();
-        public AVLT<PCRTestByID> PCRTestsByID { get; private set; } = new AVLT<PCRTestByID>();
+        private readonly AVLT<PersonByID> PersonsByID = new();
+        private readonly AVLT<PCRTestByDistrict> PCRTestsByDistrict = new();
+        private readonly AVLT<PCRTestByRegion> PCRTestsByRegion = new();
+        private readonly AVLT<PCRTestByDateAndTime> PCRTestsByDateAndTime = new();
+        private readonly AVLT<PCRTestByTestStation> PCRTestsByTestStation = new();
+        private readonly AVLT<PCRTestByID> PCRTestsByID = new();
 
         //01 - Insert new test result
         public void InsertNewPCRTest(PCRTest testToInsert)
@@ -71,9 +71,7 @@ namespace AUS2_S_1.PCRTestsSystem
             var person = PersonsByID.Find(new PersonByID(personID));
             if (person == null) return [];
 
-            return (IEnumerable<PCRTest>)person.PCRTestsByDateAndTime.InOrder();
-
-            //return (IEnumerable<PCRTest>)person.PCRTestsByID.InOrder().OrderBy(x => x.Test.DateAndTime);
+            return person.PCRTestsByDateAndTime.InOrder().Select(x => x.Test);
         }
 
         //04 - Find all positive tests in date interval for certain district
@@ -93,10 +91,10 @@ namespace AUS2_S_1.PCRTestsSystem
             var district = PCRTestsByDistrict.Find(new PCRTestByDistrict(districtID));
             if (district == null) return [];
             
-            return (IEnumerable<PCRTest>)district.PCRTestsByDateAndTime.FindInterval
+            return district.PCRTestsByDateAndTime.FindInterval
             (
                 new PCRTestByDateAndTime(dateIntervalMin, int.MinValue), new PCRTestByDateAndTime(dateIntervalMax, int.MaxValue)
-            );
+            ).Select(x => x.Test);
         }
 
         //06 - Find all positive tests in date interval for certain region
@@ -117,10 +115,10 @@ namespace AUS2_S_1.PCRTestsSystem
             var region = PCRTestsByRegion.Find(new PCRTestByRegion(regionID));
             if (region == null) return [];
             
-            return (IEnumerable<PCRTest>)region.PCRTestsByDateAndTime.FindInterval
+            return region.PCRTestsByDateAndTime.FindInterval
             (
                 new PCRTestByDateAndTime(dateIntervalMin, int.MinValue), new PCRTestByDateAndTime(dateIntervalMax, int.MaxValue)
-            );
+            ).Select(x => x.Test);
         }
 
         //08 - Find all positive tests in date interval
@@ -137,9 +135,9 @@ namespace AUS2_S_1.PCRTestsSystem
         //09 - Find all tests in date interval
         public IEnumerable<PCRTest> FindAllTestsInDateInterval(DateTime dateIntervalMin, DateTime dateIntervalMax)
         {
-            return (IEnumerable<PCRTest>)PCRTestsByDateAndTime.FindInterval(
+            return PCRTestsByDateAndTime.FindInterval(
                 new PCRTestByDateAndTime(dateIntervalMin, int.MinValue), new PCRTestByDateAndTime(dateIntervalMax, int.MaxValue)
-            );
+            ).Select(x => x.Test);
         }
 
         //10 - Find all sick persons for district at some date (person is sick for x days from positive test)
@@ -168,7 +166,7 @@ namespace AUS2_S_1.PCRTestsSystem
 
             var (minValueDate, maxValueDate) = GetPositiveDaysFromDate(atDate, daysOfPositiveness);
 
-            foreach (var person in GetAllSickPersonsFromTests((IEnumerable<PCRTest>)district.PCRTestsByValueReverse.InOrder(), (minValueDate, maxValueDate)))
+            foreach (var person in GetAllSickPersonsFromTests(district.PCRTestsByValueReverse.InOrder().Select(x => x.Test), (minValueDate, maxValueDate)))
             {
                 yield return person;
             }
@@ -205,7 +203,7 @@ namespace AUS2_S_1.PCRTestsSystem
         }
 
         //14 - Find one sick person at date from every district with highest test value
-        public IEnumerable<(Person person, int districtID, double testValue)> FindOneSickPersonAtDateFromEveryDistrictWithHighestValue(DateOnly atDate, int daysOfPositiveness)
+        public IEnumerable<Person> FindOneSickPersonAtDateFromEveryDistrictWithHighestValue(DateOnly atDate, int daysOfPositiveness)
         {
             var (minValueDate, maxValueDate) = GetPositiveDaysFromDate(atDate, daysOfPositiveness);
 
@@ -222,7 +220,7 @@ namespace AUS2_S_1.PCRTestsSystem
                     var personById = PersonsByID.Find(new PersonByID(test.Test.PersonID));
                     if (personById != null)
                     {
-                        yield return (personById.Person, district.Test.DistrictID, test.Test.Value);
+                        yield return personById.Person;
                         break;
                     }   
                 }
@@ -232,16 +230,16 @@ namespace AUS2_S_1.PCRTestsSystem
         //15 - Find all districts ordered by count of sick people at date
         public IEnumerable<(int districtID, int sickPeopleCount)> FindAllDistrictsOrderedBySickPeopleCount(DateOnly atDate, int daysOfPositiveness)
         {
-            foreach (var terrUnit in FindAllTerrUnitsOrderedBySickPeopleCount((IEnumerable<PCRTest>)PCRTestsByDistrict.InOrder(), atDate, daysOfPositiveness))
+            foreach (var terrUnit in FindAllTerrUnitsOrderedBySickPeopleCount(PCRTestsByDistrict.InOrder().Select(x => x.Test), atDate, daysOfPositiveness))
             {
                 yield return terrUnit;
             }
         }
 
         //16 - Find all regions ordered by count of sick people at date
-        public IEnumerable<(int districtID, int sickPeopleCount)> FindAllRegionsOrderedBySickPeopleCount(DateOnly atDate, int daysOfPositiveness)
+        public IEnumerable<(int regionID, int sickPeopleCount)> FindAllRegionsOrderedBySickPeopleCount(DateOnly atDate, int daysOfPositiveness)
         {
-            foreach (var terrUnit in FindAllTerrUnitsOrderedBySickPeopleCount((IEnumerable<PCRTest>)PCRTestsByRegion.InOrder(), atDate, daysOfPositiveness))
+            foreach (var terrUnit in FindAllTerrUnitsOrderedBySickPeopleCount(PCRTestsByRegion.InOrder().Select(x => x.Test), atDate, daysOfPositiveness))
             {
                 yield return terrUnit;
             }
@@ -253,10 +251,10 @@ namespace AUS2_S_1.PCRTestsSystem
             var testStation = PCRTestsByTestStation.Find(new PCRTestByTestStation(testStationID));
             if (testStation == null) return [];
 
-            return (IEnumerable<PCRTest>)testStation.PCRTestsByDateAndTime.FindInterval
+            return testStation.PCRTestsByDateAndTime.FindInterval
             (
                 new PCRTestByDateAndTime(dateIntervalMin, int.MinValue), new PCRTestByDateAndTime(dateIntervalMax, int.MaxValue)
-            );
+            ).Select(x => x.Test);
         }
 
         //18 - Find test by testID
@@ -351,18 +349,18 @@ namespace AUS2_S_1.PCRTestsSystem
 
 
         //Private methods ------------------------------------
-        private (DateTime, DateTime) GetPositiveDaysFromDate(DateOnly atDate, int daysOfPositiveness)
+        private static (DateTime, DateTime) GetPositiveDaysFromDate(DateOnly atDate, int daysOfPositiveness)
         {
             var minValueDate = atDate.AddDays(-daysOfPositiveness).ToDateTime(TimeOnly.MinValue);
             var maxValueDate = atDate.ToDateTime(TimeOnly.MinValue);
             return (minValueDate, maxValueDate);
         }
 
-        private IEnumerable<PCRTest> GetTestsInPositiveDaysRange(AVLT<PCRTestByDateAndTime> avltOfTestsByDateAndTime, DateTime minValueDate, DateTime maxValueDate)
+        private static IEnumerable<PCRTest> GetTestsInPositiveDaysRange(AVLT<PCRTestByDateAndTime> avltOfTestsByDateAndTime, DateTime minValueDate, DateTime maxValueDate)
         {
-            return (IEnumerable<PCRTest>)avltOfTestsByDateAndTime.FindInterval(
+            return avltOfTestsByDateAndTime.FindInterval(
                 new PCRTestByDateAndTime(minValueDate, int.MinValue), new PCRTestByDateAndTime(maxValueDate, int.MaxValue)
-            );
+            ).Select(x => x.Test);
         }
 
         //Return all sick persons (distinct) from given tests + if given datesValues, it return sick persons from tests only in given date range
