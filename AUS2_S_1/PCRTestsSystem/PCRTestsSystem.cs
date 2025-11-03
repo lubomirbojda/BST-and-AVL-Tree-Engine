@@ -19,97 +19,107 @@ namespace AUS2_S_1.PCRTestsSystem
             return PCRTestsByID.Find(new PCRTestByID(testID)) != null;
         }
 
+        public Person? FindPersonByID(string personID)
+        {
+            return PersonsByID.Find(new PersonByID(personID))?.Person;
+        }
+
         //01 - Insert new test result
         public bool InsertNewPCRTest(PCRTest testToInsert)
         {
             //PersonsByID -> PCRTestsByID    +    PCRTestsByID
             var person = PersonsByID.Find(new PersonByID(testToInsert.PersonID));
-            if (person != null && PCRTestsByID.Insert(new PCRTestByID(testToInsert)))
-                person.PCRTestsByID.Insert(new PCRTestByID(testToInsert));
+            if (person != null && PCRTestsByID.Insert(new PCRTestByID(testToInsert, person.Person)))
+                person.PCRTestsByID.Insert(new PCRTestByID(testToInsert, person.Person));
             else
                 return false;
 
             //PersonsByID -> PCRTestsByDateAndTime
-            person?.PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert));
+            person.PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert, person.Person));
 
             //PCRTestsByDistrict
-            PCRTestsByDistrict.Insert(new PCRTestByDistrict(testToInsert));
+            PCRTestsByDistrict.Insert(new PCRTestByDistrict(testToInsert, person.Person));
 
             //PCRTestsByDistrict -> PCRTestsByDateAndTime
             var testWithDistrictId = PCRTestsByDistrict.Find(new PCRTestByDistrict(testToInsert.DistrictID));
-            testWithDistrictId?.PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert));
+            testWithDistrictId?.PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert, person.Person));
 
             //PCRTestsByDistrict -> PCRTestsByValue
-            testWithDistrictId?.PCRTestsByValueReverse.Insert(new PCRTestByValueReverse(testToInsert));
+            testWithDistrictId?.PCRTestsByValueReverse.Insert(new PCRTestByValueReverse(testToInsert, person.Person));
 
             //PCRTestsByRegion
-            PCRTestsByRegion.Insert(new PCRTestByRegion(testToInsert));
+            PCRTestsByRegion.Insert(new PCRTestByRegion(testToInsert, person.Person));
 
             //PCRTestsByRegion -> PCRTestsByDateAndTime
             var testWithRegionId = PCRTestsByRegion.Find(new PCRTestByRegion(testToInsert.DistrictID));
-            testWithRegionId?.PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert));
+            testWithRegionId?.PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert, person.Person));
 
             //PCRTestsByDateAndTime
-            PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert));
+            PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert, person.Person));
 
             //PCRTestsByTestStation
-            PCRTestsByTestStation.Insert(new PCRTestByTestStation(testToInsert));
+            PCRTestsByTestStation.Insert(new PCRTestByTestStation(testToInsert, person.Person));
 
             //PCRTestsByTestStation -> PCRTestsByDateAndTime
             var testWithTestStation = PCRTestsByTestStation.Find(new PCRTestByTestStation(testToInsert.TestStationID));
-            testWithTestStation?.PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert));
+            testWithTestStation?.PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert, person.Person));
 
             return true;
         }
 
         //02 - Find result of test (defined by testID) for person (defined by personID)
-        public PCRTest? FindTestByTestIdAndPersonId(int testId, string personID)
+        public (PCRTest?, Person?) FindTestByTestIdAndPersonId(int testId, string personID)
         {
             var person = PersonsByID.Find(new PersonByID(personID));
-            if (person == null) return null;
+            if (person == null) return (null, null);
 
             var test = person.PCRTestsByID.Find(new PCRTestByID(testId));
-            return test?.Test;
+            return (test?.Test, test?.Person);
         }
 
         //03 - Find all PCRTests for person (defined by personID) ordered by date and time
-        public IEnumerable<PCRTest> FindAllTestsForPersonOrderedByDateAndTime(string personID)
+        public IEnumerable<(PCRTest, Person)> FindAllTestsForPersonOrderedByDateAndTime(string personID)
         {
             var person = PersonsByID.Find(new PersonByID(personID));
-            if (person == null) return [];
+            if (person == null) yield break;
 
-            return person.PCRTestsByDateAndTime.InOrder().Select(x => x.Test);
+            foreach (var test in person.PCRTestsByDateAndTime.InOrder())
+            {
+                yield return (test.Test, person.Person);
+            }
         }
 
         //04 - Find all positive tests in date interval for certain district
-        public IEnumerable<PCRTest> FindAllPositiveTestsInDateIntervalForDistrict(DateTime dateIntervalMin, DateTime dateIntervalMax, int districtID)
+        public IEnumerable<(PCRTest, Person)> FindAllPositiveTestsInDateIntervalForDistrict(DateTime dateIntervalMin, DateTime dateIntervalMax, int districtID)
         {
             foreach (var test in FindAllTestsInDateIntervalForDistrict(dateIntervalMin, dateIntervalMax, districtID))
             {
-                if (test.Result)
+                if (test.Item1.Result)
                     yield return test;
             }
             //return FindAllTestsInDateIntervalForDistrict(dateIntervalMin, dateIntervalMax, districtID).Where(x => x.Result == true);
         }
 
         //05 - Find all tests in date interval for certain district
-        public IEnumerable<PCRTest> FindAllTestsInDateIntervalForDistrict(DateTime dateIntervalMin, DateTime dateIntervalMax, int districtID)
+        public IEnumerable<(PCRTest, Person)> FindAllTestsInDateIntervalForDistrict(DateTime dateIntervalMin, DateTime dateIntervalMax, int districtID)
         {
             var district = PCRTestsByDistrict.Find(new PCRTestByDistrict(districtID));
-            if (district == null) return [];
-            
-            return district.PCRTestsByDateAndTime.FindInterval
-            (
+            if (district == null) yield break;
+
+            foreach (var test in district.PCRTestsByDateAndTime.FindInterval(
                 new PCRTestByDateAndTime(dateIntervalMin, int.MinValue), new PCRTestByDateAndTime(dateIntervalMax, int.MaxValue)
-            ).Select(x => x.Test);
+            ))
+            {
+                yield return (test.Test, test.Person);
+            }
         }
 
         //06 - Find all positive tests in date interval for certain region
-        public IEnumerable<PCRTest> FindAllPositiveTestsInDateIntervalForRegion(DateTime dateIntervalMin, DateTime dateIntervalMax, int regionID)
+        public IEnumerable<(PCRTest, Person)> FindAllPositiveTestsInDateIntervalForRegion(DateTime dateIntervalMin, DateTime dateIntervalMax, int regionID)
         {
             foreach (var test in FindAllTestsInDateIntervalForRegion(dateIntervalMin, dateIntervalMax, regionID))
             {
-                if (test.Result)
+                if (test.Item1.Result)
                     yield return test;
             }
 
@@ -117,34 +127,39 @@ namespace AUS2_S_1.PCRTestsSystem
         }
 
         //07 - Find all tests in date interval for certain region
-        public IEnumerable<PCRTest> FindAllTestsInDateIntervalForRegion(DateTime dateIntervalMin, DateTime dateIntervalMax, int regionID)
+        public IEnumerable<(PCRTest, Person)> FindAllTestsInDateIntervalForRegion(DateTime dateIntervalMin, DateTime dateIntervalMax, int regionID)
         {
             var region = PCRTestsByRegion.Find(new PCRTestByRegion(regionID));
-            if (region == null) return [];
-            
-            return region.PCRTestsByDateAndTime.FindInterval
-            (
+            if (region == null) yield break;
+
+            foreach (var test in region.PCRTestsByDateAndTime.FindInterval(
                 new PCRTestByDateAndTime(dateIntervalMin, int.MinValue), new PCRTestByDateAndTime(dateIntervalMax, int.MaxValue)
-            ).Select(x => x.Test);
+            ))
+            {
+                yield return (test.Test, test.Person);
+            }
         }
 
         //08 - Find all positive tests in date interval
-        public IEnumerable<PCRTest> FindAllPositiveTestsInDateInterval(DateTime dateIntervalMin, DateTime dateIntervalMax)
+        public IEnumerable<(PCRTest, Person)> FindAllPositiveTestsInDateInterval(DateTime dateIntervalMin, DateTime dateIntervalMax)
         {
             foreach (var test in FindAllTestsInDateInterval(dateIntervalMin, dateIntervalMax))
             {
-                if (test.Result) 
+                if (test.Item1.Result) 
                     yield return test;
             }
             //return FindAllTestsInDateInterval(dateIntervalMin, dateIntervalMax).Where(x => x.Result == true);
         }
 
         //09 - Find all tests in date interval
-        public IEnumerable<PCRTest> FindAllTestsInDateInterval(DateTime dateIntervalMin, DateTime dateIntervalMax)
+        public IEnumerable<(PCRTest, Person)> FindAllTestsInDateInterval(DateTime dateIntervalMin, DateTime dateIntervalMax)
         {
-            return PCRTestsByDateAndTime.FindInterval(
+            foreach (var test in PCRTestsByDateAndTime.FindInterval(
                 new PCRTestByDateAndTime(dateIntervalMin, int.MinValue), new PCRTestByDateAndTime(dateIntervalMax, int.MaxValue)
-            ).Select(x => x.Test);
+            ))
+            {
+                yield return (test.Test, test.Person);
+            }
         }
 
         //10 - Find all sick persons for district at some date (person is sick for x days from positive test)
@@ -283,43 +298,48 @@ namespace AUS2_S_1.PCRTestsSystem
             if (testToDeleteById == null) return false;
 
             var testToDelete = testToDeleteById.Test;
+            var testToDeleteByDateAndTime = new PCRTestByDateAndTime(testToDelete.DateAndTime, testToDelete.TestID);
+            var testToDeleteByDistrict = new PCRTestByDistrict(testToDelete.DistrictID);
+            var testToDeleteByRegion = new PCRTestByRegion(testToDelete.RegionID);
+            var testToDeleteByTestStation = new PCRTestByTestStation(testToDelete.TestStationID);
+            var testToDeleteByValueReverse = new PCRTestByValueReverse(testToDelete.Value);
 
             //PCRTestsByID
-            PCRTestsByID.Delete(new PCRTestByID(testToDelete));
+            PCRTestsByID.Delete(testToDeleteById);
 
             //PersonsByID -> PCRTestsByID
             var person = PersonsByID.Find(new PersonByID(testToDelete.PersonID));
-            person?.PCRTestsByID.Delete(new PCRTestByID(testToDelete));
+            person?.PCRTestsByID.Delete(testToDeleteById);
 
             //PersonsByID -> PCRTestsByDateAndTime
-            person?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(testToDelete.DateAndTime, testToDelete.TestID));
+            person?.PCRTestsByDateAndTime.Delete(testToDeleteByDateAndTime);
 
             //PCRTestsByDistrict
             PCRTestsByDistrict.Delete(new PCRTestByDistrict(testToDelete.DistrictID));
 
             //PCRTestsByDistrict -> PCRTestsByDateAndTime
-            var testWithDistrictId = PCRTestsByDistrict.Find(new PCRTestByDistrict(testToDelete.DistrictID));
-            testWithDistrictId?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(testToDelete));
+            var testWithDistrictId = PCRTestsByDistrict.Find(testToDeleteByDistrict);
+            testWithDistrictId?.PCRTestsByDateAndTime.Delete(testToDeleteByDateAndTime);
 
             //PCRTestsByDistrict -> PCRTestsByValue
-            testWithDistrictId?.PCRTestsByValueReverse.Delete(new PCRTestByValueReverse(testToDelete));
+            testWithDistrictId?.PCRTestsByValueReverse.Delete(testToDeleteByValueReverse);
 
             //PCRTestsByRegion
-            PCRTestsByRegion.Delete(new PCRTestByRegion(testToDelete));
+            PCRTestsByRegion.Delete(testToDeleteByRegion);
 
             //PCRTestsByRegion -> PCRTestsByDateAndTime
-            var testWithRegionId = PCRTestsByRegion.Find(new PCRTestByRegion(testToDelete.DistrictID));
-            testWithRegionId?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(testToDelete));
+            var testWithRegionId = PCRTestsByRegion.Find(testToDeleteByRegion);
+            testWithRegionId?.PCRTestsByDateAndTime.Delete(testToDeleteByDateAndTime);
 
             //PCRTestsByDateAndTime
-            PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(testToDelete));
+            PCRTestsByDateAndTime.Delete(testToDeleteByDateAndTime);
 
             //PCRTestsByTestStation
-            PCRTestsByTestStation.Delete(new PCRTestByTestStation(testToDelete));
+            PCRTestsByTestStation.Delete(testToDeleteByTestStation);
 
             //PCRTestsByTestStation -> PCRTestsByDateAndTime
-            var testWithTestStation = PCRTestsByTestStation.Find(new PCRTestByTestStation(testToDelete.TestStationID));
-            testWithTestStation?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(testToDelete));
+            var testWithTestStation = PCRTestsByTestStation.Find(testToDeleteByTestStation);
+            testWithTestStation?.PCRTestsByDateAndTime.Delete(testToDeleteByDateAndTime);
 
             return true;
         }
@@ -334,19 +354,20 @@ namespace AUS2_S_1.PCRTestsSystem
 
             foreach (var test in personTests)
             {
-                var region = PCRTestsByRegion.Find(new PCRTestByRegion(test.Test));
-                region?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(test.Test));
+                //var region = PCRTestsByRegion.Find(new PCRTestByRegion(test.Test));
+                //region?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(test.Test));
 
-                var district = PCRTestsByDistrict.Find(new PCRTestByDistrict(test.Test));
-                district?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(test.Test));
-                district?.PCRTestsByValueReverse.Delete(new PCRTestByValueReverse(test.Test));
+                //var district = PCRTestsByDistrict.Find(new PCRTestByDistrict(test.Test));
+                //district?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(test.Test));
+                //district?.PCRTestsByValueReverse.Delete(new PCRTestByValueReverse(test.Test));
 
-                PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(test.Test));
+                //PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(test.Test));
 
-                var testStation = PCRTestsByTestStation.Find(new PCRTestByTestStation(test.Test));
-                testStation?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(test.Test));
+                //var testStation = PCRTestsByTestStation.Find(new PCRTestByTestStation(test.Test));
+                //testStation?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(test.Test));
 
-                PCRTestsByID.Delete(new PCRTestByID(test.Test));
+                //PCRTestsByID.Delete(new PCRTestByID(test.Test));
+                DeletePCRTestById(test.Test.TestID);
             }
 
             PersonsByID.Delete(new PersonByID(person.Person));

@@ -1,12 +1,14 @@
+
 namespace AUS2_S_1.PCRTestsSystem.Data.Test
 {
+    using AUS2_S_1.PCRTestsSystem.Data.Person;
     public class PCRTestByDateAndTime : BasePCRTestComparable<PCRTestByDateAndTime>
     {
-        public PCRTestByDateAndTime(PCRTest pcrTest) : base(pcrTest)
+        public PCRTestByDateAndTime(PCRTest pcrTest, Person person) : base(pcrTest, person)
         {
         }
 
-        public PCRTestByDateAndTime(DateTime dateTime, int testID) : base(new PCRTest(dateTime, string.Empty, testID, default, default, default, default, default))
+        public PCRTestByDateAndTime(DateTime dateTime, int testID) : base(new PCRTest(dateTime, string.Empty, testID, default, default, default, default))
         {
         }
 

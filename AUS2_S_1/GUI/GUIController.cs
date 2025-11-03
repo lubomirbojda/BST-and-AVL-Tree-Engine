@@ -9,7 +9,7 @@ namespace AUS2_S_1.GUI
         private readonly PCRTestsSystem systemPCR = new();
 
         //01
-        public bool InsertNewTest(DateTime testTime, string personID, int stationID, int districtID, int regionID, bool testResult, double testValue, string note)
+        public bool InsertNewTest(DateTime testTime, string personID, int stationID, int districtID, int regionID, double testValue, string note)
         {
             var rand = new Random();
             int testID = rand.Next();
@@ -18,7 +18,7 @@ namespace AUS2_S_1.GUI
                 testID = rand.Next();
             }
 
-            return systemPCR.InsertNewPCRTest(new PCRTest(testTime, personID, testID, stationID, districtID, regionID, testResult, testValue, note));
+            return systemPCR.InsertNewPCRTest(new PCRTest(testTime, personID, testID, stationID, districtID, regionID, testValue, note));
         }
 
         //02

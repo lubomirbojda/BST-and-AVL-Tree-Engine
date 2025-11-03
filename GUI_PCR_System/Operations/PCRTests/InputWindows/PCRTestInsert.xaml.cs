@@ -22,7 +22,6 @@ namespace GUI_PCR_System.Operations.PCRTests.InputWindows
                 TestStationIDBox.Value ?? default,
                 DisctrictIDBox.Value ?? default,
                 RegionIDBox.Value ?? default,
-                ResultCheckBox.IsChecked ?? default,
                 ValueBox.Value ?? default,
                 NoteTextBox.Text
                 );
