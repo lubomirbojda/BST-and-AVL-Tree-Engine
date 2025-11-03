@@ -25,7 +25,7 @@
             </Button.ContextMenu>
         </Button>
 
-        <ListView Grid.Row="1" Margin="5" x:Name="PCRTestsListView">
+        <ListView Grid.Row="1" Margin="5" x:Name="PersonsListView">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="First name" DisplayMemberBinding="{Binding FirstName}" Width="150"/>

@@ -1,4 +1,6 @@
+using System.Runtime.CompilerServices;
 using System.Windows;
+using AUS2_S_1.GUI;
 using GUI_PCR_System.Operations.Districts;
 using GUI_PCR_System.Operations.PCRTests;
 using GUI_PCR_System.Operations.Persons;
@@ -11,10 +13,11 @@ namespace GUI_PCR_System
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly PCRTestsOperations PCRTestsOperationsWindow = new();
-        private readonly PersonsOperations PersonsOperationsWindow = new();
-        private readonly DistrictsOperations DistrictsOperationsWindow = new();
-        private readonly RegionsOperations RegionsOperationsWindow = new();
+        private static readonly GUIController guiController = new();
+        private readonly PCRTestsOperations PCRTestsOperationsWindow = new(guiController);
+        private readonly PersonsOperations PersonsOperationsWindow = new(guiController);
+        private readonly DistrictsOperations DistrictsOperationsWindow = new(guiController);
+        private readonly RegionsOperations RegionsOperationsWindow = new(guiController);
 
         public MainWindow()
         {

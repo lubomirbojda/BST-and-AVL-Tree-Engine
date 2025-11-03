@@ -2,6 +2,7 @@ namespace AUS2_S_1.PCRTestsSystem.Data.Test
 {
     public class PCRTestByValueReverse : BasePCRTestComparable<PCRTestByValueReverse>
     {
+        private const double OFFSET  = 0.000000001;
         public PCRTestByValueReverse(PCRTest pcrTest) : base(pcrTest)
         {
         }
@@ -15,13 +16,27 @@ namespace AUS2_S_1.PCRTestsSystem.Data.Test
             if (other == null)
                 throw new ArgumentNullException();
 
-            var compareByValue = other.Test.Value.CompareTo(Test.Value);
-            if (compareByValue == 0)
+            var compareOffset = CompareWithOffset(other.Test.Value, Test.Value);
+
+            if (compareOffset == 0)
             {
                 return Test.TestID.CompareTo(other.Test.TestID);
             }
 
-            return compareByValue;
+            return compareOffset;
+        }
+
+        private static int CompareWithOffset(double testValue, double otherTestValue)
+        {
+            if (Math.Abs(testValue - otherTestValue) < OFFSET)
+            {
+                return 0;
+            }
+            if (testValue < otherTestValue)
+            {
+                return -1;
+            }
+            return 1;
         }
     }
 }

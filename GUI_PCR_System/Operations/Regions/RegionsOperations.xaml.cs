@@ -1,5 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
+using AUS2_S_1.GUI;
+using GUI_PCR_System.Operations.Regions.InputWindows;
 
 namespace GUI_PCR_System.Operations.Regions
 {
@@ -8,9 +10,16 @@ namespace GUI_PCR_System.Operations.Regions
     /// </summary>
     public partial class RegionsOperations : Window
     {
-        public RegionsOperations()
+        public GUIController GuiController { get; private set; }
+        public RegionsOperations(GUIController controller)
         {
             InitializeComponent();
+            GuiController = controller;
+        }
+
+        public void SetNewResult(IEnumerable<(int regionID, int sickPeopleCount)>? newItemsSource)
+        {
+            RegionsListView.ItemsSource = newItemsSource;
         }
 
         private void ChooseOperation_Click(object sender, RoutedEventArgs e)
@@ -25,7 +34,8 @@ namespace GUI_PCR_System.Operations.Regions
 
         private void Operation_FindAllRegionsOrderedBySickPeopleCountAtDate(object sender, RoutedEventArgs e)
         {
-
+            var findWindow = new RegionsFindAllOrderedBySickPeopleCountAtDate(this);
+            findWindow.ShowDialog();
         }
     }
 }

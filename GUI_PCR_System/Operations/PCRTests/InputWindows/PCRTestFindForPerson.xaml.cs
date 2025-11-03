@@ -1,4 +1,5 @@
 using System.Windows;
+using AUS2_S_1.PCRTestsSystem.Data.Test;
 
 namespace GUI_PCR_System.Operations.PCRTests.InputWindows
 {
@@ -7,9 +8,24 @@ namespace GUI_PCR_System.Operations.PCRTests.InputWindows
     /// </summary>
     public partial class PCRTestFindForPerson : Window
     {
-        public PCRTestFindForPerson()
+        private readonly PCRTestsOperations operationsWindow;
+        public PCRTestFindForPerson(PCRTestsOperations operationsWindow)
         {
             InitializeComponent();
+            this.operationsWindow = operationsWindow;
+        }
+
+        private void FindButton_Click(object sender, RoutedEventArgs e)
+        {
+            var test = operationsWindow.GuiController.FindTestForPerson(PersonIDBox.Text, TestIDBox.Value ?? default);
+            IEnumerable<PCRTest>? result = test != null ? [test] : null;
+            operationsWindow.SetNewResult(result);
+            Close();
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

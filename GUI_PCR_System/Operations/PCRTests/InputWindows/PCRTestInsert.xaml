@@ -16,6 +16,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -28,26 +29,30 @@
 
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Person ID:" Margin="15"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Height="25" Margin="5" x:Name="PositionBox" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Height="25" Margin="5" x:Name="PersonIDTextBox" VerticalContentAlignment="Center"/>
 
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Test station ID:" Margin="15"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Height="25" Margin="5" x:Name="PhoneBox" VerticalContentAlignment="Center"/>
+        <xctk:IntegerUpDown Grid.Row="2" Grid.Column="1" Margin="5" x:Name="TestStationIDBox"/>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="District ID:" Margin="15"/>
-        <TextBox Grid.Row="3" Grid.Column="1" Height="25" Margin="5" x:Name="EmailBox" VerticalContentAlignment="Center"/>
+        <xctk:IntegerUpDown Grid.Row="3" Grid.Column="1" Margin="5" x:Name="DisctrictIDBox"/>
 
         <TextBlock Grid.Row="4" Grid.Column="0" Text="Region ID:" Margin="15"/>
-        <TextBox Grid.Row="4" Grid.Column="1" Height="25" Margin="5" x:Name="RoomBox" VerticalContentAlignment="Center"/>
+        <xctk:IntegerUpDown Grid.Row="4" Grid.Column="1" Margin="5" x:Name="RegionIDBox"/>
 
         <TextBlock Grid.Row="5" Grid.Column="0" Text="Result:" Margin="15"/>
-        <CheckBox Grid.Row="5" Grid.Column="1" Height="25" Margin="5" x:Name="MainWorkplaceBox" VerticalContentAlignment="Center" IsChecked="False" Content="Positive"/>
+        <CheckBox Grid.Row="5" Grid.Column="1" Height="25" Margin="5" x:Name="ResultCheckBox" VerticalContentAlignment="Center" IsChecked="False" Content="Positive"/>
 
-        <TextBlock Grid.Row="6" Grid.Column="0" Text="Note:" Margin="15"/>
-        <TextBox Grid.Row="6" Grid.Column="1" Height="25" Margin="5" x:Name="WorkplaceBox" VerticalContentAlignment="Center"/>
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="Value:" Margin="15"/>
+        <xctk:DoubleUpDown Grid.Row="6" Grid.Column="1" Margin="5" x:Name="ValueBox"/>
+
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="Note:" Margin="15"/>
+        <TextBox Grid.Row="7" Grid.Column="1" Height="25" Margin="5" x:Name="NoteTextBox" VerticalContentAlignment="Center"/>
 
 
 
-        <Button Grid.Row="7" Grid.Column="1" Content="Cancel" Width="80" Height="25" HorizontalAlignment="Right" Margin="5" VerticalAlignment="Bottom"/>
-        <Button Grid.Row="7" Grid.Column="1" Content="Add test" Width="80" Height="25" VerticalAlignment="Bottom" Margin="5"/>
+        <Button Grid.Row="8" Grid.Column="1" Content="Cancel" Width="80" Height="25" HorizontalAlignment="Right" Margin="5" VerticalAlignment="Bottom" 
+                Click="CancelButton_Click"/>
+        <Button Grid.Row="8" Grid.Column="1" Content="Insert test" Width="80" Height="25" VerticalAlignment="Bottom" Margin="5" Click="InsertTestButton_Click"/>
     </Grid>
 </Window>

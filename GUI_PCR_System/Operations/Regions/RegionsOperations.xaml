@@ -20,7 +20,7 @@
             </Button.ContextMenu>
         </Button>
 
-        <ListView Grid.Row="1" Margin="5" x:Name="PCRTestsListView">
+        <ListView Grid.Row="1" Margin="5" x:Name="RegionsListView">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Region ID" DisplayMemberBinding="{Binding regionID}" Width="150"/>

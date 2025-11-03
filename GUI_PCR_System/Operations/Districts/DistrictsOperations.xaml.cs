@@ -1,5 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
+using AUS2_S_1.GUI;
+using AUS2_S_1.PCRTestsSystem.Data.Test;
+using GUI_PCR_System.Operations.Districts.InputWindows;
 
 namespace GUI_PCR_System.Operations.Districts
 {
@@ -8,9 +11,16 @@ namespace GUI_PCR_System.Operations.Districts
     /// </summary>
     public partial class DistrictsOperations : Window
     {
-        public DistrictsOperations()
+        public GUIController GuiController { get; private set; }
+        public DistrictsOperations(GUIController controller)
         {
             InitializeComponent();
+            GuiController = controller;
+        }
+
+        public void SetNewResult(IEnumerable<(int districtID, int sickPeopleCount)>? newItemsSource)
+        {
+            DistrictsListView.ItemsSource = newItemsSource;
         }
 
         private void ChooseOperation_Click(object sender, RoutedEventArgs e)
@@ -25,7 +35,8 @@ namespace GUI_PCR_System.Operations.Districts
 
         private void Operation_FindAllDistrictsOrderedBySickPeopleCountAtDate(object sender, RoutedEventArgs e)
         {
-
+            var findWindow = new DistrictsFindAllOrderedBySickPeopleCountAtDate(this);
+            findWindow.ShowDialog();
         }
     }
 }

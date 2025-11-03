@@ -14,12 +14,20 @@ namespace AUS2_S_1.PCRTestsSystem
         private readonly AVLT<PCRTestByTestStation> PCRTestsByTestStation = new();
         private readonly AVLT<PCRTestByID> PCRTestsByID = new();
 
-        //01 - Insert new test result
-        public void InsertNewPCRTest(PCRTest testToInsert)
+        public bool IsTestIdInSystem(int testID)
         {
-            //PersonsByID -> PCRTestsByID
+            return PCRTestsByID.Find(new PCRTestByID(testID)) != null;
+        }
+
+        //01 - Insert new test result
+        public bool InsertNewPCRTest(PCRTest testToInsert)
+        {
+            //PersonsByID -> PCRTestsByID    +    PCRTestsByID
             var person = PersonsByID.Find(new PersonByID(testToInsert.PersonID));
-            person?.PCRTestsByID.Insert(new PCRTestByID(testToInsert));
+            if (person != null && PCRTestsByID.Insert(new PCRTestByID(testToInsert)))
+                person.PCRTestsByID.Insert(new PCRTestByID(testToInsert));
+            else
+                return false;
 
             //PersonsByID -> PCRTestsByDateAndTime
             person?.PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert));
@@ -51,8 +59,7 @@ namespace AUS2_S_1.PCRTestsSystem
             var testWithTestStation = PCRTestsByTestStation.Find(new PCRTestByTestStation(testToInsert.TestStationID));
             testWithTestStation?.PCRTestsByDateAndTime.Insert(new PCRTestByDateAndTime(testToInsert));
 
-            //PCRTestsByID
-            PCRTestsByID.Insert(new PCRTestByID(testToInsert));
+            return true;
         }
 
         //02 - Find result of test (defined by testID) for person (defined by personID)
@@ -264,9 +271,9 @@ namespace AUS2_S_1.PCRTestsSystem
         }
 
         //19 - Insert new person to system
-        public void InsertNewPerson(Person personToInsert)
+        public bool InsertNewPerson(Person personToInsert)
         {
-            PersonsByID.Insert(new PersonByID(personToInsert));
+            return PersonsByID.Insert(new PersonByID(personToInsert));
         }
 
         //20 - Delete PCR test from system

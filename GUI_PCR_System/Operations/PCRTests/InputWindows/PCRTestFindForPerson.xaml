@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI_PCR_System.Operations.PCRTests.InputWindows"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="PCRTestFindForPerson" Height="Auto" Width="Auto">
+        Title="PCRTestFindForPerson" Height="200" Width="300">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -18,14 +19,14 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Test ID:" Margin="15"/>
-        <TextBox Grid.Row="0" Grid.Column="1" Height="25" Margin="5" x:Name="TestIDBox" VerticalContentAlignment="Center"/>
+        <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Margin="5" x:Name="TestIDBox"/>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Person ID:" Margin="15"/>
         <TextBox Grid.Row="1" Grid.Column="1" Height="25" Margin="5" x:Name="PersonIDBox" VerticalContentAlignment="Center"/>
 
-        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="10">
-            <Button Content="Find" Width="80" Height="25" VerticalAlignment="Bottom" Margin="5"/>
-            <Button Content="Cancel" Width="80" Height="25" HorizontalAlignment="Right" Margin="5" VerticalAlignment="Bottom"/>
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
+            <Button Content="Find" Width="80" Height="25" VerticalAlignment="Bottom" Margin="5" Click="FindButton_Click"/>
+            <Button Content="Cancel" Width="80" Height="25" HorizontalAlignment="Right" Margin="5" VerticalAlignment="Bottom" Click="CancelButton_Click"/>
         </StackPanel>
         
     </Grid>
