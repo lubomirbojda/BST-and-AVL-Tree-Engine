@@ -12,19 +12,32 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button Content="Choose operation" HorizontalAlignment="Left" Width="180" Height="30" Margin="10" Click="ChooseOperation_Click">
-            <Button.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Find all regions ordered by sick people count at date" Click="Operation_FindAllRegionsOrderedBySickPeopleCountAtDate"/>
-                </ContextMenu>
-            </Button.ContextMenu>
-        </Button>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Content="Choose operation" HorizontalAlignment="Left" Width="180" Height="30" Margin="10" Click="ChooseOperation_Click">
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Find all regions ordered by sick people count at date" Click="Operation_FindAllRegionsOrderedBySickPeopleCountAtDate"/>
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
+
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="Results count: "/>
+            <TextBlock x:Name="CountTextBox" Grid.Column="2" VerticalAlignment="Center" Text="0"/>
+        </Grid>
+
+        
 
         <ListView Grid.Row="1" Margin="5" x:Name="RegionsListView">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Region ID" DisplayMemberBinding="{Binding regionID}" Width="150"/>
-                    <GridViewColumn Header="Count of sick people" DisplayMemberBinding="{Binding sickPeopleCount}" Width="150"/>
+                    <GridViewColumn Header="Region ID" DisplayMemberBinding="{Binding RegionID}" Width="150"/>
+                    <GridViewColumn Header="Count of sick people" DisplayMemberBinding="{Binding SickPeopleCount}" Width="150"/>
                 </GridView>
             </ListView.View>
         </ListView>

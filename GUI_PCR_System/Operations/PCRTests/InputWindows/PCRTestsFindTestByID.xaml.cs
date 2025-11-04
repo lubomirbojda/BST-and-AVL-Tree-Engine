@@ -1,5 +1,7 @@
 using System.Windows;
+using AUS2_S_1.PCRTestsSystem.Data.Person;
 using AUS2_S_1.PCRTestsSystem.Data.Test;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GUI_PCR_System.Operations.PCRTests.InputWindows
 {
@@ -15,10 +17,11 @@ namespace GUI_PCR_System.Operations.PCRTests.InputWindows
             this.operationsWindow = operationsWindow;
         }
 
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        private void FindButton_Click(object sender, RoutedEventArgs e)
         {
             var test = operationsWindow.GuiController.FindPCRTestByTestID(TestIDBox.Value ?? default);
-            IEnumerable<PCRTest>? result = test != null ? [test] : null;
+            IEnumerable<(PCRTest, Person)> operationResult = (test.Item1 != null && test.Item2 != null) ? [(test.Item1, test.Item2)] : [];
+            IEnumerable<TestResultView> result = operationResult.Select(x => new TestResultView(x.Item1, x.Item2));
             operationsWindow.SetNewResult(result);
             Close();
         }

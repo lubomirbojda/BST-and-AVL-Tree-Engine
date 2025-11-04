@@ -19,11 +19,12 @@ namespace GUI_PCR_System.Operations.PCRTests.InputWindows
         {
             var timeFrom = DateTimePickerFrom.Value ?? DateTime.MinValue;
             var timeTo = DateTimePickerTo.Value ?? DateTime.MaxValue;
-            var result = operationsWindow.GuiController.FindAllTestsInDistrictInTimeInterval(
+            var operationResult = operationsWindow.GuiController.FindAllTestsInDistrictInTimeInterval(
                 timeFrom, 
                 timeTo,
                 DisctrictIDBox.Value ?? default,
                 OnlyPositiveCheckBox.IsChecked ?? default);
+            IEnumerable<TestResultView> result = operationResult.Select(x => new TestResultView(x.Item1, x.Item2));
             operationsWindow.SetNewResult(result);
             Close();
         }

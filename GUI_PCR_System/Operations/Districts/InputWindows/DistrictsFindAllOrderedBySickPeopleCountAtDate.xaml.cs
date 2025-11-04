@@ -20,7 +20,8 @@ namespace GUI_PCR_System.Operations.Districts.InputWindows
                 DateOnly.FromDateTime(DatePicker.SelectedDate ?? default),
                 PositivenessDaysPicker.Value ?? default
             );
-            operationsWindow.SetNewResult(districts);
+            IEnumerable<DistrictResultView> distr = districts.Select(x => new DistrictResultView(x.districtID, x.sickPeopleCount));
+            operationsWindow.SetNewResult(distr);
             Close();
         }
 

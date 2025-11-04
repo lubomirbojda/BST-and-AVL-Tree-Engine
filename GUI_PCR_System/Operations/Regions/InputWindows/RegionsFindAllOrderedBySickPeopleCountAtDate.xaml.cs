@@ -22,7 +22,8 @@ namespace GUI_PCR_System.Operations.Regions.InputWindows
                 DateOnly.FromDateTime(DatePicker.SelectedDate ?? default),
                 PositivenessDaysPicker.Value ?? default
             );
-            operationsWindow.SetNewResult(regions);
+            IEnumerable<RegionResultView> regs = regions.Select(x => new RegionResultView(x.regionID, x.sickPeopleCount));
+            operationsWindow.SetNewResult(regs);
             Close();
         }
 

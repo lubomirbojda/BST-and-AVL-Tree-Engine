@@ -22,6 +22,7 @@ namespace GUI_PCR_System.Operations.Persons
         public void SetNewResult(IEnumerable<Person>? newItemsSource)
         {
             PersonsListView.ItemsSource = newItemsSource;
+            CountTextBox.Text = PersonsListView.Items.Count.ToString();
         }
 
         private void ChooseOperation_Click(object sender, RoutedEventArgs e)

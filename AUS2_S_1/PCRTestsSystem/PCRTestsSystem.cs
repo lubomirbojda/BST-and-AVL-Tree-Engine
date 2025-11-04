@@ -7,12 +7,12 @@ namespace AUS2_S_1.PCRTestsSystem
 {
     public class PCRTestsSystem
     {
-        private readonly AVLT<PersonByID> PersonsByID = new();
-        private readonly AVLT<PCRTestByDistrict> PCRTestsByDistrict = new();
-        private readonly AVLT<PCRTestByRegion> PCRTestsByRegion = new();
-        private readonly AVLT<PCRTestByDateAndTime> PCRTestsByDateAndTime = new();
-        private readonly AVLT<PCRTestByTestStation> PCRTestsByTestStation = new();
-        private readonly AVLT<PCRTestByID> PCRTestsByID = new();
+        private AVLT<PersonByID> PersonsByID = new();
+        private AVLT<PCRTestByDistrict> PCRTestsByDistrict = new();
+        private AVLT<PCRTestByRegion> PCRTestsByRegion = new();
+        private AVLT<PCRTestByDateAndTime> PCRTestsByDateAndTime = new();
+        private AVLT<PCRTestByTestStation> PCRTestsByTestStation = new();
+        private AVLT<PCRTestByID> PCRTestsByID = new();
 
         public bool IsTestIdInSystem(int testID)
         {
@@ -22,6 +22,48 @@ namespace AUS2_S_1.PCRTestsSystem
         public Person? FindPersonByID(string personID)
         {
             return PersonsByID.Find(new PersonByID(personID))?.Person;
+        }
+
+        public void SaveSystem()
+        {
+            string directory = Directory.GetCurrentDirectory();
+            string personsFilePath = Path.Combine(directory, "persons.csv");
+            FileInfo personsFileInfo = new(personsFilePath);
+            PersonsByID.SaveToCSV<PersonByID>(personsFileInfo);
+
+            string testsFilePath = Path.Combine(directory, "pcr_tests.csv");
+            FileInfo testsFileInfo = new(testsFilePath);
+            PCRTestsByID.SaveToCSV<PCRTestByID>(testsFileInfo);
+        }
+
+        public void LoadSystem()
+        {
+            ClearSystem();
+            string directory = Directory.GetCurrentDirectory();
+            string personsFilePath = Path.Combine(directory, "persons.csv");
+            FileInfo personsFileInfo = new(personsFilePath);
+            foreach (var person in PersonsByID.LoadFromCSV<PersonByID>(personsFileInfo))
+            {
+                InsertNewPerson(person.Person);
+            }
+
+            string testsFilePath = Path.Combine(directory, "pcr_tests.csv");
+            FileInfo testsFileInfo = new(testsFilePath);
+            foreach (var test in PCRTestsByID.LoadFromCSV<PCRTestByID>(testsFileInfo))
+            {
+                InsertNewPCRTest(test.Test);
+            }
+
+        }
+
+        public void ClearSystem()
+        {
+            PersonsByID = new();
+            PCRTestsByDistrict = new();
+            PCRTestsByRegion = new();
+            PCRTestsByDateAndTime = new();
+            PCRTestsByTestStation = new();
+            PCRTestsByID = new();
         }
 
         //01 - Insert new test result
@@ -268,21 +310,27 @@ namespace AUS2_S_1.PCRTestsSystem
         }
 
         //17 - Find all tests in date interval for certain test station
-        public IEnumerable<PCRTest> FindAllTestsInDateIntervalForTestStation(DateTime dateIntervalMin, DateTime dateIntervalMax, int testStationID)
+        public IEnumerable<(PCRTest, Person)> FindAllTestsInDateIntervalForTestStation(DateTime dateIntervalMin, DateTime dateIntervalMax, int testStationID)
         {
             var testStation = PCRTestsByTestStation.Find(new PCRTestByTestStation(testStationID));
-            if (testStation == null) return [];
+            if (testStation == null) yield break;
 
-            return testStation.PCRTestsByDateAndTime.FindInterval
+            foreach (var test in testStation.PCRTestsByDateAndTime.FindInterval
             (
                 new PCRTestByDateAndTime(dateIntervalMin, int.MinValue), new PCRTestByDateAndTime(dateIntervalMax, int.MaxValue)
-            ).Select(x => x.Test);
+            ))
+            {
+                yield return (test.Test, test.Person);
+            }
         }
 
         //18 - Find test by testID
-        public PCRTest? FindTestByTestId(int testId)
+        public (PCRTest?, Person?) FindTestByTestId(int testId)
         {
-            return PCRTestsByID.Find(new PCRTestByID(testId))?.Test;
+            var test = PCRTestsByID.Find(new PCRTestByID(testId))?.Test;
+            if (test == null) return (null, null);
+            var person = PersonsByID.Find(new PersonByID(test.PersonID));
+            return (test, person?.Person);
         }
 
         //19 - Insert new person to system

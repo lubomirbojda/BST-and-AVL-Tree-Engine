@@ -12,14 +12,14 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0">
             <MenuItem Header="File">
-                <MenuItem Header="New" />
-                <MenuItem Header="Open" />
-                <MenuItem Header="Save as..." />
+                <MenuItem Header="Open" Click="Open_Click"/>
+                <MenuItem Header="Save as..." Click="Save_Click"/>
+                <MenuItem Header="Generate" Click="Generate_Click"/>
                 <MenuItem Header="Quit" />
             </MenuItem>
         </Menu>

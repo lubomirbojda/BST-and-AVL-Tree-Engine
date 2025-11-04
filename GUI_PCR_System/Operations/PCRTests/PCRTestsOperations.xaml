@@ -12,27 +12,42 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button Content="Choose operation" HorizontalAlignment="Left" Width="180" Height="30" Margin="10" Click="ChooseOperation_Click">
-            <Button.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Insert new test" Click="Operation_InsertNewTest"/>
-                    <MenuItem Header="Find test for person" Click="Operation_FindTestForPerson"/>
-                    <MenuItem Header="Find all tests for person" Click="Operation_FindAllTestsForPerson"/>
-                    <MenuItem Header="Find all tests in district in time interval" Click="Operation_FindAllTestsInDistrictInTimeInterval"/>
-                    <MenuItem Header="Find all tests in region in time interval" Click="Operation_FindAllTestsInRegionInTimeInterval"/>
-                    <MenuItem Header="Find all tests in time interval" Click="Operation_FindAllTestsInTimeInterval"/>
-                    <MenuItem Header="Find all tests in time interval at station" Click="Operation_FindAllTestsInTimeIntervalAtStation"/>
-                    <MenuItem Header="Find test by ID" Click="Operation_FindTestByID"/>
-                    <MenuItem Header="Delete test" Click="Operation_DeleteTest"/>
-                </ContextMenu>
-            </Button.ContextMenu>
-        </Button>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Grid.Row="0" Content="Choose operation" HorizontalAlignment="Left" Width="180" Height="30" Margin="10" Click="ChooseOperation_Click">
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Insert new test" Click="Operation_InsertNewTest"/>
+                        <MenuItem Header="Find test for person" Click="Operation_FindTestForPerson"/>
+                        <MenuItem Header="Find all tests for person" Click="Operation_FindAllTestsForPerson"/>
+                        <MenuItem Header="Find all tests in district in time interval" Click="Operation_FindAllTestsInDistrictInTimeInterval"/>
+                        <MenuItem Header="Find all tests in region in time interval" Click="Operation_FindAllTestsInRegionInTimeInterval"/>
+                        <MenuItem Header="Find all tests in time interval" Click="Operation_FindAllTestsInTimeInterval"/>
+                        <MenuItem Header="Find all tests in time interval at station" Click="Operation_FindAllTestsInTimeIntervalAtStation"/>
+                        <MenuItem Header="Find test by ID" Click="Operation_FindTestByID"/>
+                        <MenuItem Header="Delete test" Click="Operation_DeleteTest"/>
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
+
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="Results count: "/>
+            <TextBlock x:Name="CountTextBox" Grid.Column="2" VerticalAlignment="Center" Text="0"/>
+        </Grid>
+        
 
         <ListView Grid.Row="1" Margin="5" x:Name="PCRTestsListView">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Date and time" DisplayMemberBinding="{Binding DateAndTime}" Width="200"/>
                     <GridViewColumn Header="Person ID" DisplayMemberBinding="{Binding PersonID}" Width="100"/>
+                    <GridViewColumn Header="First name" DisplayMemberBinding="{Binding FirstName}" Width="100"/>
+                    <GridViewColumn Header="Last name" DisplayMemberBinding="{Binding LastName}" Width="100"/>
+                    <GridViewColumn Header="Birthdate" DisplayMemberBinding="{Binding Birthdate}" Width="150"/>
                     <GridViewColumn Header="Test ID" DisplayMemberBinding="{Binding TestID}" Width="100"/>
                     <GridViewColumn Header="Station ID" DisplayMemberBinding="{Binding TestStationID}" Width="100"/>
                     <GridViewColumn Header="District ID" DisplayMemberBinding="{Binding DistrictID}" Width="100"/>

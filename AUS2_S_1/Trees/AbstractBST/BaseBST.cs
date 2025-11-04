@@ -1,3 +1,4 @@
+using AUS2_S_1.PCRTestsSystem.Interfaces;
 using AUS2_S_1.Trees.AVLTree;
 
 namespace AUS2_S_1.Trees.BaseTree
@@ -358,6 +359,56 @@ namespace AUS2_S_1.Trees.BaseTree
                 lastNode = helpNode;
                 helpNode = nextNode;
             }
+        }
+
+        public IEnumerable<TData> LevelOrder()
+        {
+            if (Root == null)
+                yield break;
+
+            var queue = new Queue<TNode>();
+            queue.Enqueue(Root);
+
+            while (queue.Count > 0)
+            {
+                var helpNode = queue.Dequeue();
+
+                yield return helpNode.Data;
+
+                if (helpNode.LeftSon != null)
+                    queue.Enqueue(helpNode.LeftSon);
+
+                if (helpNode.RightSon != null)
+                    queue.Enqueue(helpNode.RightSon);
+            }
+        }
+
+        public void SaveToCSV<TSaveData>(FileInfo fileInfo) where TSaveData : ISaveble<TSaveData>, TData
+        {
+            StreamWriter writer = new StreamWriter(fileInfo.FullName);
+
+            foreach (TSaveData item in LevelOrder())
+            {
+                string csvLine = item.CreateCSVLine(item);
+                writer.WriteLine(csvLine);
+            }
+
+            writer.Close();
+        }
+
+        public IEnumerable<TSaveData> LoadFromCSV<TSaveData>(FileInfo fileInfo) where TSaveData : ISaveble<TSaveData>, TData, new()
+        {
+            IEnumerable<TSaveData> laodedData = [];
+            StreamReader reader = new StreamReader(fileInfo.FullName);
+            string? line;
+            TSaveData saveData = new TSaveData();
+            while ((line = reader.ReadLine()) != null)
+            {
+                TSaveData data = saveData.LoadFromCSVLine(line);
+                yield return data;
+            }
+
+            reader.Close();
         }
 
         private TNode FindMinimum(TNode startingNode)

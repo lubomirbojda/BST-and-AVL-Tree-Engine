@@ -18,11 +18,12 @@ namespace GUI_PCR_System.Operations.PCRTests.InputWindows
         {
             var timeFrom = DateTimePickerFrom.Value ?? DateTime.MinValue;
             var timeTo = DateTimePickerTo.Value ?? DateTime.MaxValue;
-            var result = operationsWindow.GuiController.FindAllTestsInDateIntervalForRegion(
+            var operationResult = operationsWindow.GuiController.FindAllTestsInDateIntervalForRegion(
                 timeFrom,
                 timeTo,
                 RegionIDBox.Value ?? default,
                 OnlyPositiveCheckBox.IsChecked ?? default);
+            IEnumerable<TestResultView> result = operationResult.Select(x => new TestResultView(x.Item1, x.Item2));
             operationsWindow.SetNewResult(result);
             Close();
         }

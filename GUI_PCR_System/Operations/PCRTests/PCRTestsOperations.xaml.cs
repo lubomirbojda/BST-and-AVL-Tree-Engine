@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using AUS2_S_1.GUI;
+using AUS2_S_1.PCRTestsSystem.Data.Person;
 using AUS2_S_1.PCRTestsSystem.Data.Test;
 using GUI_PCR_System.Operations.PCRTests.InputWindows;
 namespace GUI_PCR_System.Operations.PCRTests
@@ -18,9 +19,10 @@ namespace GUI_PCR_System.Operations.PCRTests
             GuiController = controller;
         }
 
-        public void SetNewResult(IEnumerable<PCRTest>? newItemsSource)
+        public void SetNewResult(IEnumerable<TestResultView>? newItemsSource)
         {
             PCRTestsListView.ItemsSource = newItemsSource;
+            CountTextBox.Text = PCRTestsListView.Items.Count.ToString();
         }
 
         private void ChooseOperation_Click(object sender, RoutedEventArgs e)

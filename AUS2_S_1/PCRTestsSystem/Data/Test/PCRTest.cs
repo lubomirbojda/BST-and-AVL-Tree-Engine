@@ -1,3 +1,6 @@
+using System.Globalization;
+using AUS2_S_1.PCRTestsSystem.Interfaces;
+
 namespace AUS2_S_1.PCRTestsSystem.Data.Test
 {
     public class PCRTest
@@ -26,6 +29,6 @@ namespace AUS2_S_1.PCRTestsSystem.Data.Test
             else
                 Result = false;
             Note = note;
-        }       
+        }
     }
 }

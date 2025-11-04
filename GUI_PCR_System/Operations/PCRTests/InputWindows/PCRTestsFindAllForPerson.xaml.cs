@@ -18,7 +18,8 @@ namespace GUI_PCR_System.Operations.PCRTests.InputWindows
         private void FindButton_Click(object sender, RoutedEventArgs e)
         {
             var tests = operationsWindow.GuiController.FindAllTestsForPerson(PersonIDBox.Text);
-            operationsWindow.SetNewResult(tests);
+            IEnumerable<TestResultView> result = tests.Select(x => new TestResultView(x.Item1, x.Item2));
+            operationsWindow.SetNewResult(result);
             Close();
         }
 

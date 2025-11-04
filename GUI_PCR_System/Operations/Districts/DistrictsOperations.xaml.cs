@@ -18,9 +18,10 @@ namespace GUI_PCR_System.Operations.Districts
             GuiController = controller;
         }
 
-        public void SetNewResult(IEnumerable<(int districtID, int sickPeopleCount)>? newItemsSource)
+        public void SetNewResult(IEnumerable<DistrictResultView>? newItemsSource)
         {
             DistrictsListView.ItemsSource = newItemsSource;
+            CountTextBox.Text = DistrictsListView.Items.Count.ToString();
         }
 
         private void ChooseOperation_Click(object sender, RoutedEventArgs e)

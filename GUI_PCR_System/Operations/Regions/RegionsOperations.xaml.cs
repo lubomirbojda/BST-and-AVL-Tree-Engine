@@ -17,9 +17,10 @@ namespace GUI_PCR_System.Operations.Regions
             GuiController = controller;
         }
 
-        public void SetNewResult(IEnumerable<(int regionID, int sickPeopleCount)>? newItemsSource)
+        public void SetNewResult(IEnumerable<RegionResultView>? newItemsSource)
         {
             RegionsListView.ItemsSource = newItemsSource;
+            CountTextBox.Text = RegionsListView.Items.Count.ToString();
         }
 
         private void ChooseOperation_Click(object sender, RoutedEventArgs e)

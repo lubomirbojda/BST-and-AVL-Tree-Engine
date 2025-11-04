@@ -14,5 +14,6 @@ namespace AUS2_S_1.PCRTestsSystem.Data.Person
             BirthDate = birthDate;
             PersonID = personID;
         }
+
     }
 }
