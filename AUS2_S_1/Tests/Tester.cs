@@ -367,6 +367,18 @@ namespace AUS2_S_1.Tests
                     }     
                 }
 
+                if (hsData.Count > 0 && hsData.Min() != avl.FindMinimum())
+                {
+                    Console.WriteLine("Find minimum error - AVL");
+                    return;
+                }
+
+                if (hsData.Count > 0 && hsData.Min() != bst.FindMinimum())
+                {
+                    Console.WriteLine("Find minimum error - AVL");
+                    return;
+                }
+
                 if (i % 10 == 0)
                 {
                     if (!avl.IsInOrderSorted())
