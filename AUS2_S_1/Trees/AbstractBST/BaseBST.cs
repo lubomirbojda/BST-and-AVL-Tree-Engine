@@ -1,5 +1,4 @@
 using AUS2_S_1.PCRTestsSystem.Interfaces;
-using AUS2_S_1.Trees.AVLTree;
 
 namespace AUS2_S_1.Trees.BaseTree
 {
@@ -385,9 +384,9 @@ namespace AUS2_S_1.Trees.BaseTree
 
         public void SaveToCSV<TSaveData>(FileInfo fileInfo) where TSaveData : ISaveble<TSaveData>, TData
         {
-            StreamWriter writer = new StreamWriter(fileInfo.FullName);
+            StreamWriter writer = new(fileInfo.FullName);
 
-            foreach (TSaveData item in LevelOrder())
+            foreach (TSaveData item in LevelOrder().Select(v => (TSaveData)v))
             {
                 string csvLine = item.CreateCSVLine(item);
                 writer.WriteLine(csvLine);
@@ -398,10 +397,9 @@ namespace AUS2_S_1.Trees.BaseTree
 
         public IEnumerable<TSaveData> LoadFromCSV<TSaveData>(FileInfo fileInfo) where TSaveData : ISaveble<TSaveData>, TData, new()
         {
-            IEnumerable<TSaveData> laodedData = [];
-            StreamReader reader = new StreamReader(fileInfo.FullName);
+            StreamReader reader = new(fileInfo.FullName);
             string? line;
-            TSaveData saveData = new TSaveData();
+            TSaveData saveData = new();
             while ((line = reader.ReadLine()) != null)
             {
                 TSaveData data = saveData.LoadFromCSVLine(line);

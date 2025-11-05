@@ -24,38 +24,40 @@ namespace AUS2_S_1.PCRTestsSystem
             return PersonsByID.Find(new PersonByID(personID))?.Person;
         }
 
-        public void SaveSystem()
+        public void SaveSystem(string directoryPath)
         {
-            string directory = Directory.GetCurrentDirectory();
-            string personsFilePath = Path.Combine(directory, "persons.csv");
+            string personsFilePath = Path.Combine(directoryPath, "persons.csv");
             FileInfo personsFileInfo = new(personsFilePath);
             PersonsByID.SaveToCSV<PersonByID>(personsFileInfo);
 
-            string testsFilePath = Path.Combine(directory, "pcr_tests.csv");
+            string testsFilePath = Path.Combine(directoryPath, "pcr_tests.csv");
             FileInfo testsFileInfo = new(testsFilePath);
             PCRTestsByID.SaveToCSV<PCRTestByID>(testsFileInfo);
         }
 
-        public void LoadSystem()
+        public void LoadSystem(string directoryPath)
         {
             ClearSystem();
-            string directory = Directory.GetCurrentDirectory();
-            string personsFilePath = Path.Combine(directory, "persons.csv");
+            string personsFilePath = Path.Combine(directoryPath, "persons.csv");
             FileInfo personsFileInfo = new(personsFilePath);
-            foreach (var person in PersonsByID.LoadFromCSV<PersonByID>(personsFileInfo))
+            if (File.Exists(personsFilePath))
             {
-                InsertNewPerson(person.Person);
-            }
+                foreach (var person in PersonsByID.LoadFromCSV<PersonByID>(personsFileInfo))
+                {
+                    InsertNewPerson(person.Person);
+                }
+            }  
 
-            string testsFilePath = Path.Combine(directory, "pcr_tests.csv");
+            string testsFilePath = Path.Combine(directoryPath, "pcr_tests.csv");
             FileInfo testsFileInfo = new(testsFilePath);
-            foreach (var test in PCRTestsByID.LoadFromCSV<PCRTestByID>(testsFileInfo))
+            if (File.Exists(personsFilePath))
             {
-                InsertNewPCRTest(test.Test);
+                foreach (var test in PCRTestsByID.LoadFromCSV<PCRTestByID>(testsFileInfo))
+                {
+                    InsertNewPCRTest(test.Test);
+                }
             }
-
         }
-
         public void ClearSystem()
         {
             PersonsByID = new();
@@ -139,7 +141,6 @@ namespace AUS2_S_1.PCRTestsSystem
                 if (test.Item1.Result)
                     yield return test;
             }
-            //return FindAllTestsInDateIntervalForDistrict(dateIntervalMin, dateIntervalMax, districtID).Where(x => x.Result == true);
         }
 
         //05 - Find all tests in date interval for certain district
@@ -164,8 +165,6 @@ namespace AUS2_S_1.PCRTestsSystem
                 if (test.Item1.Result)
                     yield return test;
             }
-
-            //return FindAllTestsInDateIntervalForRegion(dateIntervalMin, dateIntervalMax, regionID).Where(x => x.Result == true);
         }
 
         //07 - Find all tests in date interval for certain region
@@ -190,7 +189,6 @@ namespace AUS2_S_1.PCRTestsSystem
                 if (test.Item1.Result) 
                     yield return test;
             }
-            //return FindAllTestsInDateInterval(dateIntervalMin, dateIntervalMax).Where(x => x.Result == true);
         }
 
         //09 - Find all tests in date interval
@@ -294,7 +292,7 @@ namespace AUS2_S_1.PCRTestsSystem
         //15 - Find all districts ordered by count of sick people at date
         public IEnumerable<(int districtID, int sickPeopleCount)> FindAllDistrictsOrderedBySickPeopleCount(DateOnly atDate, int daysOfPositiveness)
         {
-            foreach (var terrUnit in FindAllTerrUnitsOrderedBySickPeopleCount(PCRTestsByDistrict.InOrder().Select(x => x.Test), atDate, daysOfPositiveness))
+            foreach (var terrUnit in FindAllDistrictsOrderedBySickPeopleCount(PCRTestsByDistrict.InOrder().Select(x => x.Test), atDate, daysOfPositiveness))
             {
                 yield return terrUnit;
             }
@@ -303,7 +301,7 @@ namespace AUS2_S_1.PCRTestsSystem
         //16 - Find all regions ordered by count of sick people at date
         public IEnumerable<(int regionID, int sickPeopleCount)> FindAllRegionsOrderedBySickPeopleCount(DateOnly atDate, int daysOfPositiveness)
         {
-            foreach (var terrUnit in FindAllTerrUnitsOrderedBySickPeopleCount(PCRTestsByRegion.InOrder().Select(x => x.Test), atDate, daysOfPositiveness))
+            foreach (var terrUnit in FindAllRegionsOrderedBySickPeopleCount(PCRTestsByRegion.InOrder().Select(x => x.Test), atDate, daysOfPositiveness))
             {
                 yield return terrUnit;
             }
@@ -402,19 +400,6 @@ namespace AUS2_S_1.PCRTestsSystem
 
             foreach (var test in personTests)
             {
-                //var region = PCRTestsByRegion.Find(new PCRTestByRegion(test.Test));
-                //region?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(test.Test));
-
-                //var district = PCRTestsByDistrict.Find(new PCRTestByDistrict(test.Test));
-                //district?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(test.Test));
-                //district?.PCRTestsByValueReverse.Delete(new PCRTestByValueReverse(test.Test));
-
-                //PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(test.Test));
-
-                //var testStation = PCRTestsByTestStation.Find(new PCRTestByTestStation(test.Test));
-                //testStation?.PCRTestsByDateAndTime.Delete(new PCRTestByDateAndTime(test.Test));
-
-                //PCRTestsByID.Delete(new PCRTestByID(test.Test));
                 DeletePCRTestById(test.Test.TestID);
             }
 
@@ -467,14 +452,30 @@ namespace AUS2_S_1.PCRTestsSystem
             }
         }
 
-        private IEnumerable<(int terrUnitID, int sickPeopleCount)> FindAllTerrUnitsOrderedBySickPeopleCount(IEnumerable<PCRTest> pcrTestsByTerrUnit, 
+        private IEnumerable<(int terrUnitID, int sickPeopleCount)> FindAllDistrictsOrderedBySickPeopleCount(IEnumerable<PCRTest> uniqueTerrUnits, 
             DateOnly atDate, int daysOfPositiveness)
         {
             var avltTerrUnitsByCount = new AVLT<TerrUnitBySickPeopleCount>();
-            foreach (var terrUnit in pcrTestsByTerrUnit)
+            foreach (var terrUnit in uniqueTerrUnits)
             {
                 var allSickPersonsInDistrictCount = FindAllSickPersonsForDistrictAtDate(terrUnit.DistrictID, atDate, daysOfPositiveness).Count();
                 avltTerrUnitsByCount.Insert(new TerrUnitBySickPeopleCount(allSickPersonsInDistrictCount, terrUnit.DistrictID));
+            }
+
+            foreach (var district in avltTerrUnitsByCount.InOrder())
+            {
+                yield return (district.TerrUnitID, district.SickPeopleCount);
+            }
+        }
+
+        private IEnumerable<(int terrUnitID, int sickPeopleCount)> FindAllRegionsOrderedBySickPeopleCount(IEnumerable<PCRTest> uniqueTerrUnits,
+            DateOnly atDate, int daysOfPositiveness)
+        {
+            var avltTerrUnitsByCount = new AVLT<TerrUnitBySickPeopleCount>();
+            foreach (var terrUnit in uniqueTerrUnits)
+            {
+                var allSickPersonsInDistrictCount = FindAllSickPersonsForRegionAtDate(terrUnit.RegionID, atDate, daysOfPositiveness).Count();
+                avltTerrUnitsByCount.Insert(new TerrUnitBySickPeopleCount(allSickPersonsInDistrictCount, terrUnit.RegionID));
             }
 
             foreach (var district in avltTerrUnitsByCount.InOrder())

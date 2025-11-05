@@ -1,12 +1,9 @@
-using System.IO;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using AUS2_S_1.GUI;
 using GUI_PCR_System.Operations.Districts;
 using GUI_PCR_System.Operations.PCRTests;
 using GUI_PCR_System.Operations.Persons;
 using GUI_PCR_System.Operations.Regions;
-using Microsoft.Win32;
 
 namespace GUI_PCR_System
 {
@@ -24,7 +21,13 @@ namespace GUI_PCR_System
         public MainWindow()
         {
             InitializeComponent();
+            Closed += MW_Closed;
             PCRTestsInComboBox.IsSelected = true;
+        }
+
+        private void MW_Closed(object? sender, EventArgs e)
+        {
+            System.Windows.Application.Current.Shutdown();
         }
 
         private void ComboBoxPCRTests_Selected(object sender, RoutedEventArgs e)
@@ -58,22 +61,47 @@ namespace GUI_PCR_System
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            //var saveFileDialog = new SaveFileDialog
-            //{
-            //    Filter = "CSV File|*.csv"
-            //};
-            //var save = saveFileDialog.ShowDialog();
+            using var dialog = new FolderBrowserDialog();
+            DialogResult result = dialog.ShowDialog();
 
-            //if (save == true && saveFileDialog.CheckPathExists)
-            //{
-            //    //employees.SaveToJson(new FileInfo(saveFileDialog.FileName));
-            //}
-            guiController.SaveSystem();
+            if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
+            {
+                try
+                {
+                    guiController.SaveSystem(dialog.SelectedPath);
+                    System.Windows.MessageBox.Show($"Data saved to: {dialog.SelectedPath}",
+                                    "Saved successfuly", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Error at saving: {ex.Message}", "Error",
+                                    MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
         {
-            guiController.LoadSystem();
+            using var dialog = new FolderBrowserDialog();
+            DialogResult result = dialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
+            {
+                try
+                {
+                    // Pošleme vybranú cestu do kontroléra
+                    guiController.LoadSystem(dialog.SelectedPath);
+
+                    // Zobrazenie úspechu vo WPF
+                    System.Windows.MessageBox.Show($"Data loaded from: {dialog.SelectedPath}",
+                                    "Load successful", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Error at loading: {ex.Message}", "Error",
+                                    MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
     }
 }

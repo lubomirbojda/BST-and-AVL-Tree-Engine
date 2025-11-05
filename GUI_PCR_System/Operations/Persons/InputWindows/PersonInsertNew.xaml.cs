@@ -24,9 +24,9 @@ namespace GUI_PCR_System.Operations.Persons.InputWindows
             );
 
             if (insertResult)
-                MessageBox.Show("Person inserted successfully.", "Success", MessageBoxButton.OK);
+                System.Windows.MessageBox.Show("Person inserted successfully.", "Success", MessageBoxButton.OK);
             else
-                MessageBox.Show("Person not inserted.", "Failed", MessageBoxButton.OK);
+                System.Windows.MessageBox.Show("Person not inserted.", "Failed", MessageBoxButton.OK);
 
             Close();
         }

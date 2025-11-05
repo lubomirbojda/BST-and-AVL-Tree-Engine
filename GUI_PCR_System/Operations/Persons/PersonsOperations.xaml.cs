@@ -27,7 +27,7 @@ namespace GUI_PCR_System.Operations.Persons
 
         private void ChooseOperation_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
+            var button = sender as System.Windows.Controls.Button;
             if (button?.ContextMenu != null)
             {
                 button.ContextMenu.PlacementTarget = button;

@@ -27,9 +27,9 @@ namespace GUI_PCR_System.Operations.PCRTests.InputWindows
                 );
 
             if (insertResult)
-                MessageBox.Show("Test inserted successfully.", "Success", MessageBoxButton.OK);
+                System.Windows.MessageBox.Show("Test inserted successfully.", "Success", MessageBoxButton.OK);
             else
-                MessageBox.Show("Test not inserted.", "Failed", MessageBoxButton.OK);
+                System.Windows.MessageBox.Show("Test not inserted.", "Failed", MessageBoxButton.OK);
 
             Close();
         }

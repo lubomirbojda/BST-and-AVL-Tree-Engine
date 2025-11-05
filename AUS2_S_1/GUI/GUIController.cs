@@ -51,14 +51,14 @@ namespace AUS2_S_1.GUI
             }
         }
 
-        public void SaveSystem()
+        public void SaveSystem(string directoryPath)
         {
-            systemPCR.SaveSystem();
+            systemPCR.SaveSystem(directoryPath);
         }
 
-        public void LoadSystem()
+        public void LoadSystem(string directoryPath)
         {
-            systemPCR.LoadSystem();
+            systemPCR.LoadSystem(directoryPath);
         }
 
         //01

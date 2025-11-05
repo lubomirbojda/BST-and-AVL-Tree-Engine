@@ -19,9 +19,9 @@ namespace GUI_PCR_System.Operations.PCRTests.InputWindows
             var deleteResult = operationsWindow.GuiController.DeleteTestByTestID(TestIDBox.Value ?? default);
 
             if (deleteResult)
-                MessageBox.Show("Test deleted successfully.", "Success", MessageBoxButton.OK);
+                System.Windows.MessageBox.Show("Test deleted successfully.", "Success", MessageBoxButton.OK);
             else
-                MessageBox.Show("Test not deleted.", "Failed", MessageBoxButton.OK);
+                System.Windows.MessageBox.Show("Test not deleted.", "Failed", MessageBoxButton.OK);
 
             Close();
         }

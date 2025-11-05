@@ -150,12 +150,10 @@ namespace AUS2_S_1.Trees.AVLTree
         {
             while (node != null)
             {
-                int nodeBFBeforeRebalance = node.GetBalanceFactor();
+                int heightBeforeRebalance = node.Height;
                 node.RecalculateHeight();
                 var nodeBF = node.GetBalanceFactor();
 
-                if (nodeBFBeforeRebalance == 0 && (Math.Abs(nodeBF) == 1))
-                    return;
 
                 if (nodeBF > 1)
                 {
@@ -182,6 +180,9 @@ namespace AUS2_S_1.Trees.AVLTree
                         LeftRotation(node);
                     }
                 }
+
+                if (Math.Abs(nodeBF) == 1 && heightBeforeRebalance == node.Height)
+                    return;
 
                 node = node.Parent;
             }

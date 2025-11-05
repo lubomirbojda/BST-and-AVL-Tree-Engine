@@ -22,9 +22,9 @@ namespace GUI_PCR_System.Operations.Persons.InputWindows
             );
 
             if (deleteResult)
-                MessageBox.Show("Person deleted successfully.", "Success", MessageBoxButton.OK);
+                System.Windows.MessageBox.Show("Person deleted successfully.", "Success", MessageBoxButton.OK);
             else
-                MessageBox.Show("Person not deleted.", "Failed", MessageBoxButton.OK);
+                System.Windows.MessageBox.Show("Person not deleted.", "Failed", MessageBoxButton.OK);
 
             Close();
         }
