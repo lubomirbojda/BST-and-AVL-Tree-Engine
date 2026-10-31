@@ -207,6 +207,8 @@ Complete technical documentation (in Slovak) is included in the repository root:
   - Multi-level AVL tree architecture diagrams and wrapper class explanations
   - Asymptotic time complexity proofs for all 21 operations and full UML Class Diagram
 
+> **Note:** PDF documentation is written in the **Slovak language**.
+
 ---
 
 ## Screenshots
